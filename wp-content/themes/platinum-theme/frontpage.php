@@ -1,4 +1,4 @@
-<?php /* Template Name: Demo Page Template */
+<?php /* Template Name: Front Page Template */
 get_header(); ?>
 <main role="main">
     <section>

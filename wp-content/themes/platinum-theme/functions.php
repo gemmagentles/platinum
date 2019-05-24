@@ -9,8 +9,26 @@
 	External Modules/Files
 \*------------------------------------*/
 
-// Load any external files you have here
+add_action('acf/init', 'test_block');
+function test_block() {
 
+    // check function exists.
+    if( function_exists('acf_register_block') ) {
+
+        // register a testimonial block.
+        acf_register_block(array(
+            'name'              => 'test-block',
+            'title'             => __("Test Block"),
+            'description'       => __("The default custom block for the Test's theme."),
+            'render_template'   => 'template-parts/blocks/test-block.php',
+            'enqueue_style'     => get_template_directory_uri() . '/style.css',
+            'category'          => 'layout',
+            'icon'              => 'admin-network',
+            'mode'              => 'edit',
+            'keywords'          => array('test', 'key', 'admin'),
+        ));
+    }
+}
 /*------------------------------------*\
 	Theme Support
 \*------------------------------------*/
@@ -424,6 +442,12 @@ function create_post_type_html5()
 /*------------------------------------*\
 	ShortCode Functions
 \*------------------------------------*/
+
+add_action( 'wp_enqueue_scripts', 'load_dashicons_front_end');
+
+function load_dashicons_front_end() {
+  wp_enqueue_style( 'dashicons' );
+}
 
 // Shortcode Demo with Nested Capability
 function html5_shortcode_demo($atts, $content = null)
