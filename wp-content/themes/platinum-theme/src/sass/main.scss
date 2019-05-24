@@ -1,3 +1,154 @@
+/* Theme Name: Platinum Theme */
+/* Version: 0.1 */
+/* Author: Another Blank Page */
+
+@import 'vars.scss';
+@import 'breakpoints.scss';
+@import 'pixel-to-em.scss';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 body {
-  background: yellow;
+  background: white;
+  overflow-x: hidden;
+}
+
+section {
+  position: relative;
+}
+
+
+// used on header.php content
+.mobile-only {
+
+  @include breakpoint(smalldesktop) {
+    display: none;
+    visibility: hidden;
+  }
+}
+
+// Listen to tab events to enable outlines (accessibility improvement) there is js to detect this too to add it in for tab users in the app.js file.
+body:not(.user-is-tabbing) button:focus,
+body:not(.user-is-tabbing) input:focus,
+body:not(.user-is-tabbing) select:focus,
+body:not(.user-is-tabbing) textarea:focus {
+  outline: none;
+}
+
+/*********************
+TYPOGRAPHY
+*********************/
+
+:root {
+  font-size: em(16);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: $heading-font-family;
+  color: $heading-font-color;
+}
+
+h1 {
+  font-size: em(24);
+  line-height: 32px;
+  letter-spacing: 2.1px;
+  
+  @include breakpoint(smalldesktop) {
+    font-size: em(42);
+    line-height: 52px;
+  }
+
+  @include breakpoint(largedesktop) {
+    font-size: em(56);
+    line-height: 66px;
+  }
+
+  @include breakpoint(xlargedesktop) {
+    font-size: em(72);
+    line-height: 92px;
+  }
+}
+
+h2 {
+  font-size: em(38);
+  letter-spacing: 1.81px;
+  line-height: 54px;
+
+  @include breakpoint(smalldesktop) {
+    font-size: em(62);
+    line-height: 70px;
+  }
+}
+
+h3 {
+  font-size: em(24);
+  letter-spacing: 1px;
+}
+
+h4 {
+  font-size: em(12);
+  letter-spacing: 2.53px;
+  line-height: 20px;
+
+  @include breakpoint(desktop) {
+    font-size: em(16);
+  }
+}
+
+/*********************
+BUTTON
+*********************/
+
+.platinum-button {
+  border: 0;
+  background: $primary-color;
+  color: white;
+  text-transform: uppercase;
+  font-family: $tertiary-font-family;
+  letter-spacing: 3.05px;
+  padding: 20px 30px;
+  font-size: em(12);
+  transition: background-color 0.7s ease;
+
+  &:hover,
+  &:focus,
+  &:active {
+      background-color: $secondary-color;
+      cursor: pointer;
+  }
+
+  @include breakpoint(largedesktop) {
+    font-size: em(14);
+    padding: 24px 46px;
+  }
+}
+
+.platinum-button-white {
+  border: 0;
+  background: white;
+  color: $primary-color;
+  text-transform: uppercase;
+  font-family: $tertiary-font-family;
+  letter-spacing: 3.05px;
+  padding: 20px 40px;
+  font-size: em(14);
+}
+
+.submit-button {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50px;
+  height: 45px;
+  background-color: white;
+  border: none;
+  cursor: pointer;
 }
