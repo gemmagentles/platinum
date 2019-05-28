@@ -94,7 +94,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _sass_main_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./sass/main.scss */ \"./src/sass/main.scss\");\n/* harmony import */ var _sass_main_scss__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_sass_main_scss__WEBPACK_IMPORTED_MODULE_0__);\n// import 'jquery';\n\n\n//# sourceURL=webpack:///./src/app.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ \"jquery\");\n/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var _sass_main_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./sass/main.scss */ \"./src/sass/main.scss\");\n/* harmony import */ var _sass_main_scss__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_sass_main_scss__WEBPACK_IMPORTED_MODULE_1__);\n\n\n\n//# sourceURL=webpack:///./src/app.js?");
 
 /***/ }),
 
@@ -103,9 +103,9 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _sas
   !*** ./src/sass/main.scss ***!
   \****************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-eval("throw new Error(\"Module build failed: ModuleBuildError: Module build failed: \\n  font-family: $tertiary-font-family;\\n              ^\\n      Undefined variable: \\\"$tertiary-font-family\\\".\\n      in /Users/gemma/Documents/workspace/platinum-wp/wp-content/themes/platinum-theme/src/sass/main.scss (line 114, column 16)\\n    at runLoaders (/Users/gemma/Documents/workspace/platinum-wp/wp-content/themes/platinum-theme/node_modules/webpack/lib/NormalModule.js:259:20)\\n    at /Users/gemma/Documents/workspace/platinum-wp/wp-content/themes/platinum-theme/node_modules/loader-runner/lib/LoaderRunner.js:364:11\\n    at /Users/gemma/Documents/workspace/platinum-wp/wp-content/themes/platinum-theme/node_modules/loader-runner/lib/LoaderRunner.js:230:18\\n    at context.callback (/Users/gemma/Documents/workspace/platinum-wp/wp-content/themes/platinum-theme/node_modules/loader-runner/lib/LoaderRunner.js:111:13)\\n    at Object.asyncSassJobQueue.push [as callback] (/Users/gemma/Documents/workspace/platinum-wp/wp-content/themes/platinum-theme/node_modules/sass-loader/lib/loader.js:76:13)\\n    at Object.done [as callback] (/Users/gemma/Documents/workspace/platinum-wp/wp-content/themes/platinum-theme/node_modules/neo-async/async.js:7974:18)\\n    at options.error (/Users/gemma/Documents/workspace/platinum-wp/wp-content/themes/platinum-theme/node_modules/node-sass/lib/index.js:294:32)\");\n\n//# sourceURL=webpack:///./src/sass/main.scss?");
+eval("// extracted by mini-css-extract-plugin\n\n//# sourceURL=webpack:///./src/sass/main.scss?");
 
 /***/ }),
 
@@ -117,6 +117,17 @@ eval("throw new Error(\"Module build failed: ModuleBuildError: Module build fail
 /***/ (function(module, exports, __webpack_require__) {
 
 eval("__webpack_require__(/*! ./src/app.js */\"./src/app.js\");\nmodule.exports = __webpack_require__(/*! ./src/sass/main.scss */\"./src/sass/main.scss\");\n\n\n//# sourceURL=webpack:///multi_./src/app.js_./src/sass/main.scss?");
+
+/***/ }),
+
+/***/ "jquery":
+/*!*************************!*\
+  !*** external "jQuery" ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = jQuery;\n\n//# sourceURL=webpack:///external_%22jQuery%22?");
 
 /***/ })
 

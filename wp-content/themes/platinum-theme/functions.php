@@ -29,6 +29,27 @@ function test_block() {
         ));
     }
 }
+
+add_action('acf/init', 'full_screen_slider_block');
+function full_screen_slider_block() {
+
+    // check function exists.
+    if( function_exists('acf_register_block') ) {
+
+        // register a Full Screen Slider block.
+        acf_register_block(array(
+            'name'              => 'full_screen_slider_block',
+            'title'             => __("Full Screen Slider"),
+            'description'       => __("The block for the slider on the home page, to be full width and height of screen."),
+            'render_template'   => 'template-parts/blocks/full-screen-slider-block.php',
+            'enqueue_style'     => get_template_directory_uri() . '/style.css',
+            'category'          => 'layout',
+            'icon'              => 'images-alt2',
+            'mode'              => 'edit',
+            'keywords'          => array('test', 'key', 'admin'),
+        ));
+    }
+}
 /*------------------------------------*\
 	Theme Support
 \*------------------------------------*/
@@ -110,6 +131,13 @@ function html5blank_header_scripts()
         wp_register_script('html5blankscripts', get_template_directory_uri() . '/js/scripts.js', array('jquery'), '1.0.0'); // Custom scripts
         wp_enqueue_script('html5blankscripts'); // Enqueue it!
     }
+}
+
+// Load HTML5 Blank footer scripts
+function html5blank_footer_scripts()
+{
+    wp_register_script('full-screen-main-slider', get_template_directory_uri() . '/js/full-screen-slider.js', array('jquery'), '1.0.0'); // Conditional script(s)
+    wp_enqueue_script('full-screen-main-slider'); // Enqueue it!  
 }
 
 // Load HTML5 Blank conditional scripts
@@ -347,6 +375,7 @@ function html5blankcomments($comment, $args, $depth)
 
 // Add Actions
 add_action('init', 'html5blank_header_scripts'); // Add Custom Scripts to wp_head
+add_action('wp_footer', 'html5blank_footer_scripts'); // Add Custom Scripts to wp_footer
 //add_action('wp_print_scripts', 'html5blank_conditional_scripts'); // Add Conditional Page Scripts
 //add_action('get_header', 'enable_threaded_comments'); // Enable Threaded Comments
 add_action('wp_enqueue_scripts', 'html5blank_styles'); // Add Theme Stylesheet

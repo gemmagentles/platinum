@@ -5,6 +5,8 @@
 @import 'vars.scss';
 @import 'breakpoints.scss';
 @import 'pixel-to-em.scss';
+@import 'full-screen-slider.scss';
+@import 'header.scss';
 
 * {
   margin: 0;
@@ -21,7 +23,6 @@ section {
   position: relative;
 }
 
-
 // used on header.php content
 .mobile-only {
 
@@ -37,6 +38,14 @@ body:not(.user-is-tabbing) input:focus,
 body:not(.user-is-tabbing) select:focus,
 body:not(.user-is-tabbing) textarea:focus {
   outline: none;
+}
+
+// the home page has a full screen slider so is the only page without a footer.
+.home {
+  .footer {
+    display: none;
+    visibility: hidden;
+  }
 }
 
 /*********************
@@ -111,7 +120,7 @@ BUTTON
   background: $primary-color;
   color: white;
   text-transform: uppercase;
-  font-family: $tertiary-font-family;
+  // font-family: $tertiary-font-family;
   letter-spacing: 3.05px;
   padding: 20px 30px;
   font-size: em(12);
@@ -135,7 +144,7 @@ BUTTON
   background: white;
   color: $primary-color;
   text-transform: uppercase;
-  font-family: $tertiary-font-family;
+  // font-family: $tertiary-font-family;
   letter-spacing: 3.05px;
   padding: 20px 40px;
   font-size: em(14);

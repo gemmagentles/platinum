@@ -1,2 +1,2 @@
-// import 'jquery';
+import 'jquery';
 import './sass/main.scss';
