@@ -158,15 +158,67 @@ h1 {
 
 .header {
   position: absolute;
-  z-index: 2; }
-
-.logo-img {
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 1520px;
   width: 100%;
-  max-width: 194px;
-  margin: 28px; }
-  @media (min-width: 48em) {
-    .logo-img {
-      margin: 60px 80px; } }
+  z-index: 2;
+  display: flex; }
+  .header__logo-img {
+    width: 100%;
+    max-width: 194px;
+    margin: 28px; }
+    @media (min-width: 48em) {
+      .header__logo-img {
+        margin: 60px 80px 0 0; } }
+  .header__nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%; }
+    .header__nav--link {
+      color: white;
+      font-size: 1.0625em;
+      letter-spacing: 1.28px;
+      font-family: Akzidenz-Grotesk BQ;
+      text-decoration: none;
+      padding: 0 35px;
+      -webkit-font-smoothing: antialiased; }
+      .header__nav--link:hover + .header__dropdown--wrapper {
+        display: flex; }
+  .header__dropdown--wrapper {
+    background: white;
+    padding: 30px;
+    display: none;
+    position: absolute;
+    top: 125px; }
+  .header__dropdown--container {
+    position: relative;
+    margin-right: 30px; }
+    .header__dropdown--container:last-child {
+      margin-right: 0; }
+  .header__dropdown--text {
+    position: absolute;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: Dala Moa;
+    font-size: 1.5em;
+    line-height: 30px;
+    letter-spacing: 1.8px;
+    -webkit-font-smoothing: antialiased; }
+  .header__dropdown--image {
+    width: 100%; }
+    @media (min-width: 64em) {
+      .header__dropdown--image {
+        width: 224px; } }
+  .header__social {
+    display: flex; }
+    .header__social--icon {
+      width: 20px; }
 
 * {
   margin: 0;
