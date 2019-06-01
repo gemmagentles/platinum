@@ -14,17 +14,23 @@
 </head>
 <body <?php body_class(); ?>>
 <div class="wrapper">
-    <header class="header clear" role="banner">
+    <header class="header clear" role="banner" id="navbar-js">
         <div class="header__container">
             <div class="header__logo">
                 <a href="<?php echo home_url(); ?>">
                     <svg class="header__logo-img"><use href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-logo" xlink:href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-logo"/></svg>
                 </a>
             </div>
+            <!-- Mobile Menu -->
+            <div class="nav__hamburger-icon" id="hamburger">
+                <div class="hamburger-bar1"></div>
+                <div class="hamburger-bar2"></div>
+                <div class="hamburger-bar3"></div>
+            </div>
+            <!-- Menu -->
             <nav class="header__nav" role="navigation">
                 <?php //html5blank_nav(); ?>
 
-                <!-- Menu -->
                 <?php if ( have_rows( 'menu', 'option' ) ) : ?>
                     <?php while ( have_rows( 'menu', 'option' ) ) : the_row(); ?>
                         <a class="header__nav--link" href="<?php the_sub_field( 'menu_item_link' ); ?>"><?php the_sub_field( 'menu_item_name' ); ?></a>

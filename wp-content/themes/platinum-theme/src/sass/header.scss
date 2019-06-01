@@ -1,3 +1,14 @@
+#navbar-js {
+    // overflow: hidden;
+    background: white;
+    box-shadow: 0px 0px 9px 0px rgba(0,0,0,0.3);
+    transition: 0.4s;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 99;
+}
+
 .header {
 
     &__container {
@@ -8,6 +19,13 @@
         left: 50%;
         transform: translateX(-50%);
         z-index: 2;
+        min-height: 75px;
+        justify-content: flex-end;
+        padding: 0 40px;
+
+        @include breakpoint(xlargedesktop) {
+            padding: 0;
+        }
     }
 
     &__logo-img {
@@ -15,8 +33,12 @@
         max-width: 194px;
         margin: 28px;
         color: white;
+        display: none;
+        visibility: hidden;
         
-        @include breakpoint(tablet) {
+        @include breakpoint(smalldesktop) {
+            display: block;
+            visibility: visible;
             margin: 0 80px 0 0;
             vertical-align: bottom;
             max-height: 119px;
@@ -24,20 +46,43 @@
     }
     
     &__nav {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
+        display: none;
+        visibility: hidden;
+
+        @include breakpoint(smalldesktop) {
+            visibility: visible;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
 
         &--link {
             color: white;
-            font-size: em(17);
-            letter-spacing: 1.28px;
+            font-size: em(24);
+            letter-spacing: 1.8px;
             font-family: $secondary-font-family;
             text-decoration: none;
             -webkit-font-smoothing: antialiased;
             position: relative;
-            margin: 0 35px;
+            margin: 0 18px 25px;
+            display: block;
+
+            @include breakpoint(smalldesktop) {
+                display: flex;
+                font-size: em(16);
+                letter-spacing: 1.28px;
+                margin: 0 18px;
+            }
+            
+            @include breakpoint(desktop) {
+                margin: 0 25px;
+                font-size: em(17);
+            }
+
+            @include breakpoint(largedesktop) {
+                margin: 0 35px;
+            }
 
             &:hover,
             &:focus,
@@ -71,11 +116,22 @@
     &__dropdown {
 
         &--wrapper {
-            background: white;
             padding: 30px;
-            display: flex;
-            position: absolute; 
-            top: 119px;  
+            display: block;
+            position: relative;
+
+            @include breakpoint(smalldesktop) {
+                display: flex;
+                position: absolute; 
+                top: 119px;  
+                left: 0;
+                background: white;
+            }
+
+            @include breakpoint(largedesktop) {
+                left: 50%;
+                transform: translateX(-50%);
+            }
 
             visibility: hidden;
             opacity: 0;
@@ -102,7 +158,10 @@
         &--container {
             position: relative;
             margin-right: 30px;
-            background: $quaternary-color;
+            
+            @include breakpoint(smalldesktop) {
+                background: $quaternary-color;
+            }
 
             &:last-child {
                 margin-right: 0;
@@ -120,28 +179,45 @@
         }
 
         &--text {
-            position: absolute;
-            color: white;
+            color: $quaternary-color;
             text-decoration: none;
-            text-align: center;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            text-align: left;
             font-family: $heading-font-family;
-            font-size: em(24);
-            line-height: 30px;
+            font-size: em(20);
+            line-height: 24px;
             letter-spacing: 1.8px;
             -webkit-font-smoothing: antialiased;
             opacity: 1;
+
+            @include breakpoint(smalldesktop) {
+                color: white;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                text-align: center;
+            }
+
+            @include breakpoint(largedesktop) {
+                font-size: em(24);
+                line-height: 30px;
+            }
         }
 
         &--image {
-            width: 100%;
-            display: block;
-            transition: ease 1s;
- 
+            display: none;
+            visibility: hidden;
+
             @include breakpoint(smalldesktop) {
-                width: 224px;
+                display: block;
+                visibility: visible;
+                width: 100%;
+                max-width: 224px;
+                transition: ease 1s;
+            }
+
+            @include breakpoint(largedesktop) {
+                min-width: 224px;
             }
         }
     }
@@ -152,6 +228,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        z-index: 99;
 
         &--icon {
             width: 20px;
@@ -176,4 +253,108 @@ body:not(.page-template-frontpage) {
             color: $quaternary-color;
         }
     }
+}
+
+
+/* styles only for mobile and tablet when menu is a hamburger */
+.nav__hamburger-icon {
+    display: inline-block;
+    cursor: pointer;
+    z-index: 100;
+    position: absolute;
+    top: 20px;
+    left: 25px;
+
+    &::before {
+        content: "Menu";
+        position: absolute;
+        top: 8px;
+        left: 52px;
+        font-family: $secondary-font-family;
+        letter-spacing: 0.9px;
+        font-size: em(14);
+        color: $secondary-color;
+        text-transform: uppercase;
+    }
+
+    .hamburger-bar1, 
+    .hamburger-bar2, 
+    .hamburger-bar3 {
+        width: 30px;
+        height: 3px;
+        background-color: $secondary-color;
+        margin: 6px 0;
+        transition: 0.4s;
+    }
+
+    @include breakpoint(smalldesktop) {
+        display: none;
+        visibility: hidden;
+    }
+}
+
+ /* style the hamburger menu icon to transition into a cross when clicked */
+
+.nav__open {
+
+    &::before {
+        content: "Close";
+        position: absolute;
+        top: 8px;
+        left: 52px;
+        font-family: $secondary-color;
+        letter-spacing: 0.9px;
+        font-size: em(14);
+        color: $secondary-color;
+        text-transform: uppercase;
+
+        animation-name: fadein;
+        animation-duration: 2s;
+        opacity: 1;
+        
+        @keyframes fadein {
+            from {opacity: 0;}
+        }
+    }
+
+    .hamburger-bar1, 
+    .hamburger-bar2, 
+    .hamburger-bar3 {
+        background-color: $secondary-color;
+    }
+
+  .hamburger-bar1 {
+    transform: rotate(-45deg) translate(-9px, 6px);
+  }
+
+  .hamburger-bar2 { opacity: 0; }
+
+  .hamburger-bar3 {
+    transform: rotate(45deg) translate(-6px, -4px);
+  }  
+}
+
+ /* inside the hamburger menu once opened */
+.nav__open + .header__nav {
+  display: block;
+  visibility: visible;
+  background: $primary-color;
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation-name: slidein;
+  animation-duration: 0.3s;
+  width: 100%;
+  height: 100vh;
+  z-index: 99;
+  opacity: 1;
+  padding: 90px 10px;
+
+  @keyframes slidein {
+    from {left: -100%;}
+  }
+
+  &--link {
+    display: block;
+  }
 }
