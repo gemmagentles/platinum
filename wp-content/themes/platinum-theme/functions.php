@@ -9,6 +9,15 @@
 	External Modules/Files
 \*------------------------------------*/
 
+/* Overall Site Options */
+
+if ( function_exists('acf_add_options_page') ) {
+    acf_add_options_page();
+    acf_set_options_page_menu('Platinum Options');
+    acf_add_options_sub_page('Header Site Options');    
+    acf_add_options_sub_page('Global Site Options');
+}
+
 add_action('acf/init', 'test_block');
 function test_block() {
 

@@ -121,10 +121,10 @@
     &__progress-nav {
         position: absolute;
         bottom: 60px;
-        left: 50%;
-        transform: translateY(-50%);
         color: lighten($heading-font-color, 20%);
         display: flex;
+        justify-content: center;
+        width: 100%;
         font-family: $secondary-font-family;
         font-size: em(16);
         line-height: 26px;
