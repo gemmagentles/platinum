@@ -5,11 +5,15 @@
         'use strict';
 });
 
-    $(document).ready(function(){
-        $(".nav__hamburger-icon").click(function(){
+$(document).ready(function(){
+
+    $(".nav__hamburger-icon").click(function(){
         $(".nav__hamburger-icon").toggleClass("nav__open");
     });
 
+    $(".header__nav--link").click(function(){
+        $( this ).addClass("active");
+    });
 
     // When the user scrolls down 80px from the top of the document, make the nav bar smaller
     window.onscroll = function() {scrollFunction()};

@@ -33,11 +33,14 @@
 
                 <?php if ( have_rows( 'menu', 'option' ) ) : ?>
                     <?php while ( have_rows( 'menu', 'option' ) ) : the_row(); ?>
-                        <a class="header__nav--link" href="<?php the_sub_field( 'menu_item_link' ); ?>"><?php the_sub_field( 'menu_item_name' ); ?></a>
+                        
                         <?php if ( get_sub_field( 'drop_down_option' ) == 1 ) { 
                         // echo 'true'; 
+                        // if there is a drop down menu make the parent link just text so it does not link off to anywhere
+                        ?><div class="header__nav--link"><?php the_sub_field( 'menu_item_name' ); ?></div><?php
                         } else { 
                         // echo 'false'; 
+                        ?><a class="header__nav--link" href="<?php the_sub_field( 'menu_item_link' ); ?>"><?php the_sub_field( 'menu_item_name' ); ?></a><?php
                         } ?>
                         <?php if ( have_rows( 'drop_down_menu' ) ) : ?>
                             <div class="header__dropdown--wrapper">
