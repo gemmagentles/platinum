@@ -7,6 +7,7 @@
 @import 'pixel-to-em.scss';
 @import 'full-screen-slider.scss';
 @import 'header.scss';
+@import 'intro-panel.scss';
 
 * {
   margin: 0;
@@ -21,6 +22,18 @@ body {
 
 section {
   position: relative;
+}
+
+p {
+  font-size: em(16);
+  line-height: 28px;
+  letter-spacing: 0.55px;
+  font-family: $secondary-font-family;
+
+  @include breakpoint(smalldesktop) {
+    font-size: em(18);
+    line-height: 32px;
+  }
 }
 
 // used on header.php content
@@ -65,23 +78,13 @@ h4 {
 }
 
 h1 {
-  font-size: em(24);
-  line-height: 32px;
-  letter-spacing: 2.1px;
-  
-  @include breakpoint(smalldesktop) {
-    font-size: em(42);
-    line-height: 52px;
-  }
+  font-size: em(48);
+  line-height: 52px;
+  letter-spacing: 2.08px;
 
   @include breakpoint(largedesktop) {
-    font-size: em(56);
-    line-height: 66px;
-  }
-
-  @include breakpoint(xlargedesktop) {
-    font-size: em(72);
-    line-height: 92px;
+    font-size: em(60);
+    line-height: 82px;
   }
 }
 

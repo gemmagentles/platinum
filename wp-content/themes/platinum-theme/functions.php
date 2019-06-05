@@ -59,6 +59,28 @@ function full_screen_slider_block() {
         ));
     }
 }
+
+add_action('acf/init', 'intro_panel_block');
+function intro_panel_block() {
+
+    // check function exists.
+    if( function_exists('acf_register_block') ) {
+
+        // register a Full Screen Slider block.
+        acf_register_block(array(
+            'name'              => 'intro_panel_block',
+            'title'             => __("Intro Panel"),
+            'description'       => __("The block for the intro panel that has the heading and paragraph for multiple pages."),
+            'render_template'   => 'template-parts/blocks/intro-panel-block.php',
+            'enqueue_style'     => get_template_directory_uri() . '/style.css',
+            'category'          => 'layout',
+            'icon'              => 'editor-aligncenter',
+            'mode'              => 'edit',
+            'keywords'          => array('test', 'key', 'admin'),
+        ));
+    }
+}
+
 /*------------------------------------*\
 	Theme Support
 \*------------------------------------*/
