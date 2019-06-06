@@ -18,26 +18,7 @@ if ( function_exists('acf_add_options_page') ) {
     acf_add_options_sub_page('Global Site Options');
 }
 
-add_action('acf/init', 'test_block');
-function test_block() {
-
-    // check function exists.
-    if( function_exists('acf_register_block') ) {
-
-        // register a testimonial block.
-        acf_register_block(array(
-            'name'              => 'test-block',
-            'title'             => __("Test Block"),
-            'description'       => __("The default custom block for the Test's theme."),
-            'render_template'   => 'template-parts/blocks/test-block.php',
-            'enqueue_style'     => get_template_directory_uri() . '/style.css',
-            'category'          => 'layout',
-            'icon'              => 'admin-network',
-            'mode'              => 'edit',
-            'keywords'          => array('test', 'key', 'admin'),
-        ));
-    }
-}
+// Blocks
 
 add_action('acf/init', 'full_screen_slider_block');
 function full_screen_slider_block() {
@@ -75,6 +56,27 @@ function intro_panel_block() {
             'enqueue_style'     => get_template_directory_uri() . '/style.css',
             'category'          => 'layout',
             'icon'              => 'editor-aligncenter',
+            'mode'              => 'edit',
+            'keywords'          => array('test', 'key', 'admin'),
+        ));
+    }
+}
+
+add_action('acf/init', 'half_and_half_panel_block');
+function half_and_half_panel_block() {
+
+    // check function exists.
+    if( function_exists('acf_register_block') ) {
+
+        // register a Full Screen Slider block.
+        acf_register_block(array(
+            'name'              => 'half_and_half_panel_block',
+            'title'             => __("Half and Half Panel"),
+            'description'       => __("The block for the half and half panel that has one half as copy and the other an image."),
+            'render_template'   => 'template-parts/blocks/half-and-half-panel-block.php',
+            'enqueue_style'     => get_template_directory_uri() . '/style.css',
+            'category'          => 'layout',
+            'icon'              => 'index-card',
             'mode'              => 'edit',
             'keywords'          => array('test', 'key', 'admin'),
         ));

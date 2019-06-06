@@ -1,0 +1,82 @@
+.half-and-half-panel {
+    &__wrapper {
+        max-width: $site-width;
+        margin: 0 auto;     
+        padding: 60px 40px 100px;
+
+        @include breakpoint(smalldesktop) {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 152px 40px 126px;
+        }
+
+        @include breakpoint(largedesktop) {
+            padding: 200px 40px 200px;
+        }
+
+        @include breakpoint(xlargedesktop) {
+            padding: 240px 0 220px;
+        }
+    }
+
+    &__text-wrapper {
+        @include breakpoint(smalldesktop) {
+            max-width: 510px;
+            padding-right: 60px;
+        }
+    }
+
+    &__heading {
+        margin-top: 18px;
+    }
+
+    &__paragraph {
+        margin: 28px 0 0;
+    }
+
+    &__image-wrapper {
+        position: relative;
+        padding-top: 62px;
+        margin-top: 30px;
+
+        @include breakpoint(smalldesktop) {
+            padding-top: 0;
+            margin-top: 0;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            right: -190px;
+            background: $primary-color;
+            width: 100%;
+            z-index: -1;
+            top: 20px;
+            height: calc(100% + 20px);
+            right: -15vw;
+
+            @include breakpoint(smalldesktop) {
+                width: 50vw;
+                top: -78px;
+                height: calc(100% + 148px);
+                right: -12vw;
+            }
+
+            @include breakpoint(largedesktop) {
+                width: 50vw;
+                top: -100px;
+                height: calc(100% + 200px);
+                right: -16vw;
+            }
+
+            @include breakpoint(xlargedesktop) {
+                right: -26vw;
+            }
+        }
+    }
+
+    &__image {
+        width: 100%;
+    }
+}
