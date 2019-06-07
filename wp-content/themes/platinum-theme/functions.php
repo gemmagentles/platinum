@@ -36,7 +36,7 @@ function full_screen_slider_block() {
             'category'          => 'layout',
             'icon'              => 'images-alt2',
             'mode'              => 'edit',
-            'keywords'          => array('test', 'key', 'admin'),
+            'keywords'          => array('slider', 'full', 'screen', 'images'),
         ));
     }
 }
@@ -47,7 +47,7 @@ function intro_panel_block() {
     // check function exists.
     if( function_exists('acf_register_block') ) {
 
-        // register a Full Screen Slider block.
+        // register an Intro Panel block.
         acf_register_block(array(
             'name'              => 'intro_panel_block',
             'title'             => __("Intro Panel"),
@@ -57,7 +57,7 @@ function intro_panel_block() {
             'category'          => 'layout',
             'icon'              => 'editor-aligncenter',
             'mode'              => 'edit',
-            'keywords'          => array('test', 'key', 'admin'),
+            'keywords'          => array('intro', 'panel', 'text'),
         ));
     }
 }
@@ -68,7 +68,7 @@ function half_and_half_panel_block() {
     // check function exists.
     if( function_exists('acf_register_block') ) {
 
-        // register a Full Screen Slider block.
+        // register a Half and Half Panel block.
         acf_register_block(array(
             'name'              => 'half_and_half_panel_block',
             'title'             => __("Half and Half Panel"),
@@ -78,7 +78,28 @@ function half_and_half_panel_block() {
             'category'          => 'layout',
             'icon'              => 'index-card',
             'mode'              => 'edit',
-            'keywords'          => array('test', 'key', 'admin'),
+            'keywords'          => array('half', 'panel', 'text', 'image'),
+        ));
+    }
+}
+
+add_action('acf/init', 'content_overlay_panel_block');
+function content_overlay_panel_block() {
+
+    // check function exists.
+    if( function_exists('acf_register_block') ) {
+
+        // register a Content Overlay Panel block.
+        acf_register_block(array(
+            'name'              => 'content_overlay_panel_block',
+            'title'             => __("Content Overlay Panel"),
+            'description'       => __("The block for the content overlay panel that has one background image with a white box holding text on top."),
+            'render_template'   => 'template-parts/blocks/content-overlay-panel-block.php',
+            'enqueue_style'     => get_template_directory_uri() . '/style.css',
+            'category'          => 'layout',
+            'icon'              => 'align-right',
+            'mode'              => 'edit',
+            'keywords'          => array('content', 'overlay', 'panel'),
         ));
     }
 }
