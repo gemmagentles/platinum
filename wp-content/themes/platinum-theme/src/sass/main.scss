@@ -11,6 +11,7 @@
 @import 'footer.scss';
 @import 'half-and-half-panel.scss';
 @import 'content-overlay-panel.scss';
+@import 'tiles.scss';
 
 * {
   margin: 0;
@@ -115,8 +116,21 @@ h2 {
 }
 
 h3 {
-  font-size: em(24);
-  letter-spacing: 1px;
+  font-size: em(28);
+  letter-spacing: 1px;    
+  line-height: 38px;
+
+  @include breakpoint(smalldesktop) {
+    font-size: em(32);
+    // letter-spacing: 1px;    
+    line-height: 38px;
+  }
+
+  @include breakpoint(largedesktop) {
+    font-size: em(48);
+    line-height: 60px;
+    letter-spacing: 1.6px;
+  }
 }
 
 h4 {

@@ -104,6 +104,27 @@ function content_overlay_panel_block() {
     }
 }
 
+add_action('acf/init', 'tiles_block');
+function tiles_block() {
+
+    // check function exists.
+    if( function_exists('acf_register_block') ) {
+
+        // register a Tiles block.
+        acf_register_block(array(
+            'name'              => 'tiles_block',
+            'title'             => __("Tiles"),
+            'description'       => __("The block for the Tiles that has a grid of square images with a heading on top of each, and when hovered has a description."),
+            'render_template'   => 'template-parts/blocks/tiles-block.php',
+            'enqueue_style'     => get_template_directory_uri() . '/style.css',
+            'category'          => 'layout',
+            'icon'              => 'screenoptions',
+            'mode'              => 'edit',
+            'keywords'          => array('grid', 'boxes', 'images'),
+        ));
+    }
+}
+
 /*------------------------------------*\
 	Theme Support
 \*------------------------------------*/
