@@ -125,6 +125,27 @@ function tiles_block() {
     }
 }
 
+add_action('acf/init', 'accordion_block');
+function accordion_block() {
+
+    // check function exists.
+    if( function_exists('acf_register_block') ) {
+
+        // register a accordion block.
+        acf_register_block(array(
+            'name'              => 'accordion_block',
+            'title'             => __("Accordion"),
+            'description'       => __("The block for the accordion that can have multiple rows of accordions that hold text inside, and will appear once clicked."),
+            'render_template'   => 'template-parts/blocks/accordion-block.php',
+            'enqueue_style'     => get_template_directory_uri() . '/style.css',
+            'category'          => 'layout',
+            'icon'              => 'editor-justify',
+            'mode'              => 'edit',
+            'keywords'          => array('accordion', 'text'),
+        ));
+    }
+}
+
 /*------------------------------------*\
 	Theme Support
 \*------------------------------------*/

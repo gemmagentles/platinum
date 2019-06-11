@@ -4,8 +4,6 @@
     }
 
     &__container {
-        max-width: 704px;
-        margin: 0 auto;
         text-align: center;
         padding: 80px 40px;
     }
@@ -16,6 +14,8 @@
         justify-content: center;
         width: 100%;
         padding-bottom: 16px;
+        max-width: 800px;
+        margin: 0 auto;
 
         &:after {
             content: '';
@@ -29,5 +29,7 @@
 
     &__paragraph {
         padding-top: 50px;
+        max-width: 704px;
+        margin: 0 auto;
     }
 }
