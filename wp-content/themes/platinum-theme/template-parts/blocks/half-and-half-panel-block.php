@@ -1,6 +1,7 @@
-<?php if ( have_rows( 'half_and_half_panel_group' ) ) : ?>
-	<?php while ( have_rows( 'half_and_half_panel_group' ) ) : the_row(); ?>
-        <div class="half-and-half-panel__wrapper">
+<?php if ( have_rows( 'half_and_half_panel_repeater' ) ) : ?>
+<div class="half-and-half-panel">
+	<?php while ( have_rows( 'half_and_half_panel_repeater' ) ) : the_row(); ?>
+    <div class="half-and-half-panel__wrapper<?php if ( get_sub_field( 're-order' ) == 1 ) { ?> half-and-half-panel__order-left<?php } ?>">
             <div class="half-and-half-panel__text-wrapper">
                 <span class="subtitle"><?php the_sub_field( 'sub_title' ); ?></span>
                 <h2 class="half-and-half-panel__heading"><?php the_sub_field( 'heading' ); ?></h2>
@@ -18,4 +19,7 @@
             </div>
         </div>
 	<?php endwhile; ?>
+    </div>
+<?php else : ?>
+	<?php // no rows found ?>
 <?php endif; ?>

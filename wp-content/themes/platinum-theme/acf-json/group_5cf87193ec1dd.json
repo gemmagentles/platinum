@@ -3,10 +3,10 @@
     "title": "Half and Half Panel",
     "fields": [
         {
-            "key": "field_5cf871cfcd43a",
-            "label": "Half and Half Panel Group",
-            "name": "half_and_half_panel_group",
-            "type": "group",
+            "key": "field_5d0041af99e42",
+            "label": "Half and Half Panel Repeater",
+            "name": "half_and_half_panel_repeater",
+            "type": "repeater",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -15,7 +15,11 @@
                 "class": "",
                 "id": ""
             },
+            "collapsed": "",
+            "min": 0,
+            "max": 0,
             "layout": "block",
+            "button_label": "",
             "sub_fields": [
                 {
                     "key": "field_5cf871f9cd43b",
@@ -79,7 +83,7 @@
                     "label": "Button Text",
                     "name": "button_text",
                     "type": "text",
-                    "instructions": "",
+                    "instructions": "The button is optional.",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -131,32 +135,27 @@
                     "max_height": "",
                     "max_size": "",
                     "mime_types": ""
+                },
+                {
+                    "key": "field_5cf872c1cd440",
+                    "label": "Re-order",
+                    "name": "re-order",
+                    "type": "true_false",
+                    "instructions": "The default is image on the right and text on the left. Check this check box if you want to switch it. Do you want the image to be on the left and the text on the right?",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 0,
+                    "ui": 0,
+                    "ui_on_text": "",
+                    "ui_off_text": ""
                 }
             ]
-        },
-        {
-            "key": "field_5cf872c1cd440",
-            "label": "Order",
-            "name": "order",
-            "type": "radio",
-            "instructions": "Do you want the image to be on the right or the left?",
-            "required": 1,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "choices": {
-                "right": "Right",
-                "left": "Left"
-            },
-            "allow_null": 0,
-            "other_choice": 0,
-            "default_value": "",
-            "layout": "vertical",
-            "return_format": "value",
-            "save_other_choice": 0
         }
     ],
     "location": [
@@ -176,5 +175,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1559786372
+    "modified": 1560301951
 }
