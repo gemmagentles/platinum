@@ -13,6 +13,7 @@
 @import 'content-overlay-panel.scss';
 @import 'tiles.scss';
 @import 'accordion.scss';
+@import 'logo-tiles.scss';
 
 * {
   margin: 0;
@@ -123,7 +124,6 @@ h3 {
 
   @include breakpoint(smalldesktop) {
     font-size: em(32);
-    // letter-spacing: 1px;    
     line-height: 38px;
   }
 

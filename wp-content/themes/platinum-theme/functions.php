@@ -146,6 +146,27 @@ function accordion_block() {
     }
 }
 
+add_action('acf/init', 'logo_tiles_block');
+function logo_tiles_block() {
+
+    // check function exists.
+    if( function_exists('acf_register_block') ) {
+
+        // register a logo_tiles block.
+        acf_register_block(array(
+            'name'              => 'logo_tiles_block',
+            'title'             => __("Logo Tiles"),
+            'description'       => __("The block for the Logo Tiles that is a grid of logo images in 4 columns with a rectangle background color."),
+            'render_template'   => 'template-parts/blocks/logo-tiles-block.php',
+            'enqueue_style'     => get_template_directory_uri() . '/style.css',
+            'category'          => 'layout',
+            'icon'              => 'grid-view',
+            'mode'              => 'edit',
+            'keywords'          => array('logo', 'tiles', 'grid'),
+        ));
+    }
+}
+
 /*------------------------------------*\
 	Theme Support
 \*------------------------------------*/
