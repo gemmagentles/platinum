@@ -1,0 +1,160 @@
+.half-and-half-panel {
+
+    &__wrapper {
+        max-width: $inner-site-width;
+        margin: 0 auto;     
+        padding: 60px 40px 40px;
+
+        @include breakpoint(smalldesktop) {       
+            padding: 152px 40px 126px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @include breakpoint(largedesktop) {
+            padding: 200px 40px 104px;
+        }
+
+        @include breakpoint(xlargedesktop) {
+            padding: 240px 0 104px;
+        }
+
+        // make the padding more to account if there is only one panel
+        &:first-child {
+            padding: 60px 40px 40px;
+
+            @include breakpoint(smalldesktop) {       
+                padding: 152px 40px 126px;
+            }
+
+            @include breakpoint(largedesktop) {
+                padding: 200px 40px 200px;
+            }
+
+            @include breakpoint(xlargedesktop) {
+                padding: 240px 0 220px;
+            }
+        }
+
+        // reduce the padding top for the 2nd child to account for the first child being given more padding for the times it is on its own. 
+        &:nth-child(2) {
+            padding: 60px 40px 40px;
+
+            @include breakpoint(smalldesktop) {
+                padding: 128px 40px 126px;
+            }
+
+            @include breakpoint(largedesktop) {
+                padding: 120px 40px 120px;
+            }
+
+            @include breakpoint(xlargedesktop) {
+                padding: 120px 0 104px;
+            }
+        }
+
+        &:last-child {
+            padding: 60px 40px 100px;
+
+            @include breakpoint(smalldesktop) {       
+                padding: 128px 40px 126px;
+            }
+
+            @include breakpoint(largedesktop) {
+                padding: 200px 40px 200px;
+            }
+
+            @include breakpoint(xlargedesktop) {
+                padding: 240px 0 220px;
+            }
+        }
+    }
+
+    &__order-left {
+        flex-direction: row-reverse;
+
+        .half-and-half-panel__image-wrapper::after {
+            left: -15vw;
+
+            @include breakpoint(smalldesktop) {
+                left: -12vw;
+            }
+
+            @include breakpoint(largedesktop) {
+                left: -16vw;
+            }
+
+            @include breakpoint(xlargedesktop) {
+                left: -26vw;
+            }
+        }
+
+        .half-and-half-panel__text-wrapper {
+            @include breakpoint(smalldesktop) {
+                padding-left: 60px;
+                padding-right: 0;
+            }
+        }
+    }
+
+    &__text-wrapper {
+        @include breakpoint(smalldesktop) {
+            max-width: 510px;
+            padding-right: 60px;
+        }
+    }
+
+    &__heading {
+        margin-top: 18px;
+    }
+
+    &__paragraph {
+        margin: 28px 0 0;
+    }
+
+    &__image-wrapper {
+        position: relative;
+        padding-top: 62px;
+        margin-top: 30px;
+
+        @include breakpoint(smalldesktop) {
+            padding-top: 0;
+            margin-top: 0;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            right: -190px;
+            background: $primary-color;
+            width: 100%;
+            z-index: -1;
+            top: 20px;
+            height: calc(100% + 20px);
+            right: -15vw;
+
+            @include breakpoint(smalldesktop) {
+                width: 50vw;
+                top: -78px;
+                height: calc(100% + 148px);
+                right: -12vw;
+            }
+
+            @include breakpoint(largedesktop) {
+                width: 50vw;
+                top: -100px;
+                height: calc(100% + 200px);
+                right: -16vw;
+            }
+
+            @include breakpoint(xlargedesktop) {
+                right: -26vw;
+            }
+        }
+    }
+
+    &__image {
+        width: 100%;
+    }
+}

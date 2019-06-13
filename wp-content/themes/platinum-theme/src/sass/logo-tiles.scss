@@ -1,0 +1,55 @@
+.logo-tiles {
+    &__wrapper {
+        max-width: $inner-site-width;
+        margin: 0 auto;
+        padding: 80px 40px;
+
+        @include breakpoint(desktop) {
+            padding: 100px 40px;
+        }
+
+        @include breakpoint(xlargedesktop) {
+            padding: 140px 0;
+        }
+    }
+
+    &__heading,
+    &__paragraph {
+        text-align: center;
+    }
+
+    &__paragraph {
+        padding: 40px 0 80px;
+        max-width: 690px;
+        margin: 0 auto;
+    }
+
+    &__grid {
+        @include breakpoint(smalldesktop) {
+            display: grid;
+            grid-template-columns: auto auto auto auto;
+            grid-gap: 40px;
+        }
+    }
+
+    &__logo-wrapper {
+        background: $primary-color;
+        padding: 50px;
+        max-width: 320px;
+        display: flex;
+        align-items: center;
+        margin: 0 auto 40px;
+
+        &:last-child {
+            margin: 0 auto;
+        }
+
+        @include breakpoint(smalldesktop) {
+            margin: 0;
+        }
+    }
+
+    &__logo {
+        width: 100%;
+    }
+}

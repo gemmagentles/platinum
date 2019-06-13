@@ -1,0 +1,35 @@
+/*********************
+COLOURS
+*********************/
+
+$primary-color: #F6F5F2; /* beige backgrounds */
+$secondary-color: #C1AD93; /* dark beige highlights and lines */
+$tertiary-color: #1C1C1D; /* off black footer */
+$quaternary-color: #29292B; /* light black footer */
+$heading-font-color: #4A4A50; /* dark grey */
+$font-color: #29292B; /* darker grey */
+$border-color: #979797; /* grey */
+
+/*********************
+SIZES
+*********************/
+
+$site-width: 1520px;
+$inner-site-width: 1400px;
+
+/*********************
+TYPOGRAPHY
+*********************/
+
+@font-face {
+    font-family: Akzidenz-Grotesk BQ;
+    src: url("/wp-content/themes/platinum-theme/fonts/AkzidenzGroteskBQ-Light.otf") format("opentype");
+}
+
+@font-face {
+    font-family: Dala Moa;
+    src: url("/wp-content/themes/platinum-theme/fonts/DalaMoaRegular.otf") format("opentype");
+}
+
+$heading-font-family: Dala Moa;
+$secondary-font-family: Akzidenz-Grotesk BQ;
