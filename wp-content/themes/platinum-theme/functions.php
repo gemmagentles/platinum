@@ -146,15 +146,15 @@ function accordion_block() {
     }
 }
 
-add_action('acf/init', 'wysiwyg_block');
-function wysiwyg_block() {
+add_action('acf/init', 'logo_tiles_block');
+function logo_tiles_block() {
 
     // check function exists.
     if( function_exists('acf_register_block') ) {
 
-        // register a wysiwyg block.
+        // register a logo tiles block.
         acf_register_block(array(
-            'name'              => 'wysiwyg_block',
+            'name'              => 'logo_tiles_block',
             'title'             => __("Logo Tiles"),
             'description'       => __("The block for the Logo Tiles that is a grid of logo images in 4 columns with a rectangle background color."),
             'render_template'   => 'template-parts/blocks/logo-tiles-block.php',
