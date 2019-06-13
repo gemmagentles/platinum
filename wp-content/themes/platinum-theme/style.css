@@ -9,6 +9,7 @@ COLOURS
 /* off black footer */
 /* light black footer */
 /* dark grey */
+/* greyish */
 /* darker grey */
 /* grey */
 /*********************
@@ -109,7 +110,7 @@ h1 {
   .full-screen-slider__content {
     max-width: 590px;
     position: absolute;
-    z-index: 2;
+    z-index: 1;
     transform: translate(50%, -50%);
     top: 50%;
     right: 50%; }
@@ -269,7 +270,7 @@ h1 {
   transition: 0.2s 1s;
   /* delay of 1 seconds on hover off */
   /* prevent users from showing submenu when hovering hidden element */
-  pointer-events: none;
+  pointer-events: none !important;
   /* sub elements can be hovered */
   /* show submenu when trigger or menu itself is hovered */ }
   @media (min-width: 64em) {
@@ -379,7 +380,7 @@ body:not(.page-template-frontpage) .header {
   cursor: pointer;
   z-index: 100;
   position: absolute;
-  top: 20px;
+  top: 22px;
   left: 25px; }
   .nav__hamburger-icon::before {
     content: "Menu";
@@ -395,7 +396,7 @@ body:not(.page-template-frontpage) .header {
   .nav__hamburger-icon .hamburger-bar2,
   .nav__hamburger-icon .hamburger-bar3 {
     width: 30px;
-    height: 3px;
+    height: 2px;
     background-color: #C1AD93;
     margin: 6px 0;
     transition: 0.4s; }
@@ -429,7 +430,7 @@ body:not(.page-template-frontpage) .header {
   background-color: #C1AD93; }
 
 .nav__open .hamburger-bar1 {
-  transform: rotate(-45deg) translate(-9px, 6px); }
+  transform: rotate(-45deg) translate(-8px, 4px); }
 
 .nav__open .hamburger-bar2 {
   opacity: 0; }
@@ -476,7 +477,10 @@ body:not(.page-template-frontpage) .header {
 
 .intro-panel__container {
   text-align: center;
-  padding: 80px 40px; }
+  padding: 50px 40px; }
+  @media (min-width: 64em) {
+    .intro-panel__container {
+      padding: 80px 40px; } }
 
 .intro-panel__heading {
   position: relative;
@@ -784,7 +788,8 @@ body:not(.page-template-frontpage) .header {
 
 .content-overlay-panel__image {
   width: 100%;
-  max-width: 1281px; }
+  max-width: 1281px;
+  display: block; }
 
 .tiles__wrapper {
   max-width: 1400px;
@@ -982,8 +987,6 @@ body:not(.page-template-frontpage) .header {
     grid-gap: 40px; } }
 
 .logo-tiles__logo-wrapper {
-  background: #F6F5F2;
-  padding: 50px;
   max-width: 320px;
   display: flex;
   align-items: center;
@@ -1027,12 +1030,12 @@ section {
   font-size: 0.875em;
   line-height: 26px;
   letter-spacing: 2.0px;
-  color: #29292B; }
+  color: #392f27; }
   .subtitle::after {
     content: "";
     position: absolute;
     height: 2px;
-    border-bottom: 1px solid #29292B;
+    border-bottom: 1px solid #979797;
     width: 70px;
     top: 5px;
     left: 100%;
@@ -1069,7 +1072,8 @@ h2,
 h3,
 h4 {
   font-family: Dala Moa;
-  color: #4A4A50; }
+  color: #4A4A50;
+  font-weight: 400; }
 
 h1 {
   font-size: 3em;
