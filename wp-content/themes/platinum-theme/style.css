@@ -997,6 +997,17 @@ body:not(.page-template-frontpage) .header {
 .logo-tiles__logo {
   width: 100%; }
 
+.custom-wysiwyg__wrapper {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 50px 40px; }
+  @media (min-width: 64em) {
+    .custom-wysiwyg__wrapper {
+      padding: 100px 40px 140px; } }
+  @media (min-width: 97.5em) {
+    .custom-wysiwyg__wrapper {
+      padding: 100px 0 140px; } }
+
 * {
   margin: 0;
   padding: 0;

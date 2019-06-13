@@ -1,0 +1,13 @@
+.custom-wysiwyg__wrapper {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 50px 40px;
+
+  @include breakpoint(smalldesktop) {
+    padding: 100px 40px 140px;
+  }
+
+  @include breakpoint(xlargedesktop) {
+    padding: 100px 0 140px;
+  }
+}

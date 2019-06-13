@@ -146,15 +146,15 @@ function accordion_block() {
     }
 }
 
-add_action('acf/init', 'logo_tiles_block');
-function logo_tiles_block() {
+add_action('acf/init', 'wysiwyg_block');
+function wysiwyg_block() {
 
     // check function exists.
     if( function_exists('acf_register_block') ) {
 
-        // register a logo_tiles block.
+        // register a wysiwyg block.
         acf_register_block(array(
-            'name'              => 'logo_tiles_block',
+            'name'              => 'wysiwyg_block',
             'title'             => __("Logo Tiles"),
             'description'       => __("The block for the Logo Tiles that is a grid of logo images in 4 columns with a rectangle background color."),
             'render_template'   => 'template-parts/blocks/logo-tiles-block.php',
@@ -163,6 +163,27 @@ function logo_tiles_block() {
             'icon'              => 'grid-view',
             'mode'              => 'edit',
             'keywords'          => array('logo', 'tiles', 'grid'),
+        ));
+    }
+}
+
+add_action('acf/init', 'custom_wysiwyg_block');
+function custom_wysiwyg_block() {
+
+    // check function exists.
+    if( function_exists('acf_register_block') ) {
+
+        // register a wysiwyg block.
+        acf_register_block(array(
+            'name'              => 'custom_wysiwyg_block',
+            'title'             => __("wysiwyg"),
+            'description'       => __("The block for the WYSIWYG that is a content editor."),
+            'render_template'   => 'template-parts/blocks/wysiwyg-block.php',
+            'enqueue_style'     => get_template_directory_uri() . '/style.css',
+            'category'          => 'layout',
+            'icon'              => 'editor-alignleft',
+            'mode'              => 'edit',
+            'keywords'          => array('wysiwyg', 'editor'),
         ));
     }
 }
