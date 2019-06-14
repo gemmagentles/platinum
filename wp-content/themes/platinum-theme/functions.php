@@ -209,6 +209,27 @@ function cards_with_captions_block() {
     }
 }
 
+add_action('acf/init', 'map_block');
+function map_block() {
+
+    // check function exists.
+    if( function_exists('acf_register_block') ) {
+
+        // register a Map block.
+        acf_register_block(array(
+            'name'              => 'map_block',
+            'title'             => __("Map with Overlay"),
+            'description'       => __("The block for the Map to show location of business."),
+            'render_template'   => 'template-parts/blocks/map-block.php',
+            'enqueue_style'     => get_template_directory_uri() . '/style.css',
+            'category'          => 'layout',
+            'icon'              => 'location-alt',
+            'mode'              => 'edit',
+            'keywords'          => array('map'),
+        ));
+    }
+}
+
 /*------------------------------------*\
 	Theme Support
 \*------------------------------------*/

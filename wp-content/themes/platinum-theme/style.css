@@ -1108,6 +1108,64 @@ body:not(.page-template-frontpage) .header {
   letter-spacing: 2.1px;
   color: #29292B; }
 
+.map__wrapper {
+  background: #F6F5F2;
+  padding: 0 0 60px 0; }
+  @media (min-width: 64em) {
+    .map__wrapper {
+      padding: 0 40px 90px 40px; } }
+  @media (min-width: 87em) {
+    .map__wrapper {
+      padding: 0 40px 120px 40px; } }
+  @media (min-width: 97.5em) {
+    .map__wrapper {
+      padding: 0 0 120px 0; } }
+
+.map__container {
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative; }
+
+.map__google-map {
+  padding: 0 40px;
+  display: flex; }
+  @media (min-width: 64em) {
+    .map__google-map {
+      padding: 0 0 0 122px; } }
+
+.map__content-box {
+  background: white;
+  padding: 50px 40px; }
+  @media (min-width: 64em) {
+    .map__content-box {
+      max-width: 602px;
+      padding: 50px;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100%; } }
+  @media (min-width: 70em) {
+    .map__content-box {
+      padding: 60px; } }
+  @media (min-width: 87em) {
+    .map__content-box {
+      padding: 80px; } }
+
+.map__heading {
+  margin-top: 18px; }
+
+.map__paragraph {
+  margin: 28px 0 0; }
+
+.wpgmza_map {
+  height: 450px !important; }
+  @media (min-width: 64em) {
+    .wpgmza_map {
+      height: 550px !important; } }
+  @media (min-width: 87em) {
+    .wpgmza_map {
+      height: 740px !important; } }
+
 * {
   margin: 0;
   padding: 0;
