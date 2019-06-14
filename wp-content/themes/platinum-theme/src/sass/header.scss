@@ -158,7 +158,7 @@
             transition: 0.2s 1s; /* delay of 1 seconds on hover off */
 
             /* prevent users from showing submenu when hovering hidden element */
-            pointer-events: none;
+            pointer-events: none !important;
 
             /* sub elements can be hovered */
             & > * {
@@ -297,7 +297,7 @@ body:not(.page-template-frontpage) {
     cursor: pointer;
     z-index: 100;
     position: absolute;
-    top: 20px;
+    top: 22px;
     left: 25px;
 
     &::before {
@@ -316,7 +316,7 @@ body:not(.page-template-frontpage) {
     .hamburger-bar2, 
     .hamburger-bar3 {
         width: 30px;
-        height: 3px;
+        height: 2px;
         background-color: $secondary-color;
         margin: 6px 0;
         transition: 0.4s;
@@ -359,7 +359,7 @@ body:not(.page-template-frontpage) {
     }
 
   .hamburger-bar1 {
-    transform: rotate(-45deg) translate(-9px, 6px);
+    transform: rotate(-45deg) translate(-8px, 4px);
   }
 
   .hamburger-bar2 { opacity: 0; }
