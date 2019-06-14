@@ -188,6 +188,27 @@ function custom_wysiwyg_block() {
     }
 }
 
+add_action('acf/init', 'cards_with_captions_block');
+function cards_with_captions_block() {
+
+    // check function exists.
+    if( function_exists('acf_register_block') ) {
+
+        // register a Cards with Captions block.
+        acf_register_block(array(
+            'name'              => 'cards_with_captions_block',
+            'title'             => __("Cards with Captions"),
+            'description'       => __("The block for the Cards with Captions that is a grid of profile images with a title and subtile, and a paragraph on top of image on hover."),
+            'render_template'   => 'template-parts/blocks/cards-with-captions-block.php',
+            'enqueue_style'     => get_template_directory_uri() . '/style.css',
+            'category'          => 'layout',
+            'icon'              => 'id-alt',
+            'mode'              => 'edit',
+            'keywords'          => array('cards', 'captions', 'hover'),
+        ));
+    }
+}
+
 /*------------------------------------*\
 	Theme Support
 \*------------------------------------*/
