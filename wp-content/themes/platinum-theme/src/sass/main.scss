@@ -17,6 +17,7 @@
 @import 'wysiwyg.scss';
 @import 'cards-with-captions.scss';
 @import 'map.scss';
+@import 'contact-form.scss';
 
 * {
   margin: 0;
@@ -169,6 +170,7 @@ BUTTON
   &:focus {
       text-decoration: underline;
       cursor: pointer;
+      color: $secondary-color;
   }
 
   &::before {

@@ -29,11 +29,6 @@
         @include breakpoint(smalldesktop) {
             padding: 0 0 0 122px;
         }
-
-        // @include breakpoint(largedesktop) {
-        //     display: flex;
-        //     justify-content: flex-end;
-        // }
     }
 
     &__content-box {

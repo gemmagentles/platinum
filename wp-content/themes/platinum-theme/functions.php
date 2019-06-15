@@ -230,6 +230,27 @@ function map_block() {
     }
 }
 
+add_action('acf/init', 'contact_form_block');
+function contact_form_block() {
+
+    // check function exists.
+    if( function_exists('acf_register_block') ) {
+
+        // register a Contact Form block.
+        acf_register_block(array(
+            'name'              => 'contact_form_block',
+            'title'             => __("Contact Form"),
+            'description'       => __("The block for the Contact Form that has name, email, telephone and a message input."),
+            'render_template'   => 'template-parts/blocks/contact-form-block.php',
+            'enqueue_style'     => get_template_directory_uri() . '/style.css',
+            'category'          => 'layout',
+            'icon'              => 'email-alt',
+            'mode'              => 'edit',
+            'keywords'          => array('contact', 'form'),
+        ));
+    }
+}
+
 /*------------------------------------*\
 	Theme Support
 \*------------------------------------*/
