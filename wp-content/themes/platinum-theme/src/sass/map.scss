@@ -1,0 +1,75 @@
+.map {
+    &__wrapper {
+        background: $primary-color;
+        padding: 0 0 60px 0;
+
+        @include breakpoint(smalldesktop) {
+            padding: 0 40px 90px 40px;
+        }
+
+        @include breakpoint(largedesktop) {
+            padding: 0 40px 120px 40px;
+        }
+
+        @include breakpoint(xlargedesktop) {
+            padding: 0 0 120px 0;
+        }
+    }
+
+    &__container {
+        max-width: $inner-site-width;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    &__google-map {
+        padding: 0 40px;
+        display: flex;
+
+        @include breakpoint(smalldesktop) {
+            padding: 0 0 0 122px;
+        }
+    }
+
+    &__content-box {
+        background: white;
+        padding: 50px 40px;
+        
+        @include breakpoint(smalldesktop) {
+            max-width: 602px;
+            padding: 50px;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+        }
+
+        @include breakpoint(desktop) {
+            padding: 60px;
+        }
+
+        @include breakpoint(largedesktop) {
+            padding: 80px;
+        }
+    }
+
+    &__heading {
+        margin-top: 18px;
+    }
+
+    &__paragraph {
+        margin: 28px 0 0;
+    }
+}
+
+.wpgmza_map {
+    height: 450px !important;
+
+    @include breakpoint(smalldesktop) {
+        height: 550px !important;            
+    }
+
+    @include breakpoint(largedesktop) {
+        height: 740px !important;            
+    }
+}

@@ -188,6 +188,90 @@ function custom_wysiwyg_block() {
     }
 }
 
+add_action('acf/init', 'cards_with_captions_block');
+function cards_with_captions_block() {
+
+    // check function exists.
+    if( function_exists('acf_register_block') ) {
+
+        // register a Cards with Captions block.
+        acf_register_block(array(
+            'name'              => 'cards_with_captions_block',
+            'title'             => __("Cards with Captions"),
+            'description'       => __("The block for the Cards with Captions that is a grid of profile images with a title and subtile, and a paragraph on top of image on hover."),
+            'render_template'   => 'template-parts/blocks/cards-with-captions-block.php',
+            'enqueue_style'     => get_template_directory_uri() . '/style.css',
+            'category'          => 'layout',
+            'icon'              => 'id-alt',
+            'mode'              => 'edit',
+            'keywords'          => array('cards', 'captions', 'hover'),
+        ));
+    }
+}
+
+add_action('acf/init', 'map_block');
+function map_block() {
+
+    // check function exists.
+    if( function_exists('acf_register_block') ) {
+
+        // register a Map block.
+        acf_register_block(array(
+            'name'              => 'map_block',
+            'title'             => __("Map with Overlay"),
+            'description'       => __("The block for the Map to show location of business."),
+            'render_template'   => 'template-parts/blocks/map-block.php',
+            'enqueue_style'     => get_template_directory_uri() . '/style.css',
+            'category'          => 'layout',
+            'icon'              => 'location-alt',
+            'mode'              => 'edit',
+            'keywords'          => array('map'),
+        ));
+    }
+}
+
+add_action('acf/init', 'contact_form_block');
+function contact_form_block() {
+
+    // check function exists.
+    if( function_exists('acf_register_block') ) {
+
+        // register a Contact Form block.
+        acf_register_block(array(
+            'name'              => 'contact_form_block',
+            'title'             => __("Contact Form"),
+            'description'       => __("The block for the Contact Form that has name, email, telephone and a message input."),
+            'render_template'   => 'template-parts/blocks/contact-form-block.php',
+            'enqueue_style'     => get_template_directory_uri() . '/style.css',
+            'category'          => 'layout',
+            'icon'              => 'email-alt',
+            'mode'              => 'edit',
+            'keywords'          => array('contact', 'form'),
+        ));
+    }
+}
+
+add_action('acf/init', 'highlight_slider_block');
+function highlight_slider_block() {
+
+    // check function exists.
+    if( function_exists('acf_register_block') ) {
+
+        // register a Highlight Slider block.
+        acf_register_block(array(
+            'name'              => 'highlight_slider_block',
+            'title'             => __("Highlight Slider"),
+            'description'       => __("The block for the Highlight Slider that rotates images horizontally along the page."),
+            'render_template'   => 'template-parts/blocks/highlight-slider-block.php',
+            'enqueue_style'     => get_template_directory_uri() . '/style.css',
+            'category'          => 'layout',
+            'icon'              => 'images-alt',
+            'mode'              => 'edit',
+            'keywords'          => array('slider', 'highlight', 'images'),
+        ));
+    }
+}
+
 /*------------------------------------*\
 	Theme Support
 \*------------------------------------*/
@@ -301,6 +385,8 @@ function html5blank_footer_scripts()
 {
     wp_register_script('full-screen-main-slider', get_template_directory_uri() . '/js/full-screen-slider.js', array('jquery'), '1.0.0'); // Conditional script(s)
     wp_enqueue_script('full-screen-main-slider'); // Enqueue it!  
+    wp_register_script('highlight-main-slider', get_template_directory_uri() . '/js/highlight-slider.js', array('jquery'), '1.0.0'); // Conditional script(s)
+    wp_enqueue_script('highlight-main-slider'); // Enqueue it!
 }
 
 // Load HTML5 Blank conditional scripts

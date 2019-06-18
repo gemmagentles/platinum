@@ -1,0 +1,123 @@
+.cards-with-captions {
+    &__cards-wrapper {
+        max-width: $inner-site-width;
+        margin: 0 auto;
+        padding: 10px 40px 80px;
+
+        @include breakpoint(tablet) {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 60px 40px;
+            justify-items: center;
+            padding: 80px 40px;
+        }
+
+        @include breakpoint(smalldesktop) {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-gap: 60px 40px;
+            justify-items: center;
+            padding: 140px 40px 120px;
+        }
+
+        @include breakpoint(largedesktop) {
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+        }
+
+        @include breakpoint(xlargedesktop) {
+            padding: 140px 0 120px;
+        }
+    }
+
+    &__card {
+        position: relative;
+
+        @include breakpoint(smalldesktop) {
+            max-width: 320px;
+        }
+    }
+
+    &__image-wrapper {
+        position: relative;
+
+        &:hover,
+        &:focus {
+            @include breakpoint(smalldesktop) {
+
+                &::before {
+                    content: " ";
+                    background-color: black;
+                    width: 100%;
+                    height: 100%;
+                    opacity: 0.7;
+                    position: absolute;
+                    z-index: 1;
+                }
+
+                .cards-with-captions__hover-paragraph {
+                    visibility: visible;
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    &__image {
+        width: 100%;
+        max-height: 100%;
+        display: block;
+        margin-top: 50px;
+
+        @include breakpoint(tablet) {
+            margin-top: 0;
+        }
+    }
+
+    &__hover-paragraph {
+        position: absolute;
+        z-index: 2;
+        bottom: 40px;
+        left: 40px;
+        color: white;
+        font-family: $secondary-font-family;
+        font-size: em(16);
+        line-height: 24px;
+        letter-spacing: 0.67px;
+        display: none;
+        visibility: hidden;
+        padding-right: 40px;
+
+        @include breakpoint(smalldesktop) {
+            opacity: 0;
+            display: block;
+            visibility: hidden;
+            transition: all 1.5s ease;
+        }
+    }
+
+    &__title {
+        padding: 30px 0 15px;
+        font-size: em(28);
+        letter-spacing: 1px;    
+        line-height: 38px;
+      
+        @include breakpoint(smalldesktop) {
+          font-size: em(32);
+          line-height: 38px;
+        }
+      
+        @include breakpoint(largedesktop) {
+          font-size: em(36);
+          line-height: 26px;
+          letter-spacing: 1.5px;
+        }
+    }
+
+    &__subtitle {
+        text-transform: uppercase;
+        font-family: $secondary-font-family;
+        font-size: em(14);
+        letter-spacing: 2.1px;
+        color: $font-color;
+    }
+}
