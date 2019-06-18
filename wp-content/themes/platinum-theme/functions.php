@@ -251,6 +251,27 @@ function contact_form_block() {
     }
 }
 
+add_action('acf/init', 'highlight_slider_block');
+function highlight_slider_block() {
+
+    // check function exists.
+    if( function_exists('acf_register_block') ) {
+
+        // register a Highlight Slider block.
+        acf_register_block(array(
+            'name'              => 'highlight_slider_block',
+            'title'             => __("Highlight Slider"),
+            'description'       => __("The block for the Highlight Slider that rotates images horizontally along the page."),
+            'render_template'   => 'template-parts/blocks/highlight-slider-block.php',
+            'enqueue_style'     => get_template_directory_uri() . '/style.css',
+            'category'          => 'layout',
+            'icon'              => 'images-alt',
+            'mode'              => 'edit',
+            'keywords'          => array('slider', 'highlight', 'images'),
+        ));
+    }
+}
+
 /*------------------------------------*\
 	Theme Support
 \*------------------------------------*/
@@ -364,6 +385,8 @@ function html5blank_footer_scripts()
 {
     wp_register_script('full-screen-main-slider', get_template_directory_uri() . '/js/full-screen-slider.js', array('jquery'), '1.0.0'); // Conditional script(s)
     wp_enqueue_script('full-screen-main-slider'); // Enqueue it!  
+    wp_register_script('highlight-main-slider', get_template_directory_uri() . '/js/highlight-slider.js', array('jquery'), '1.0.0'); // Conditional script(s)
+    wp_enqueue_script('highlight-main-slider'); // Enqueue it!
 }
 
 // Load HTML5 Blank conditional scripts
