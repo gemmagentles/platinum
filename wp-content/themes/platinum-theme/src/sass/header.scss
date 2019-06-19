@@ -1,12 +1,55 @@
-#navbar-js {
-    // overflow: hidden;
-    background: white;
-    box-shadow: 0px 0px 9px 0px rgba(0,0,0,0.3);
-    transition: 0.4s;
-    // position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 99;
+// sticky/fixed menu but only for pages that are not the home page as home page is full screen.
+body:not(.page-template-frontpage) {
+    main {
+        // add space to account for the size of the nav bar now it is fixed. 
+        padding-top: 75px;
+
+        @include breakpoint(smalldesktop) {
+            padding-top: 116px;
+        }
+    }
+
+    #navbar-js {
+        overflow: visible;
+        background: white;
+        transition: 0.4s;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 99;
+    }
+
+    .header {
+         // only have a fixed nav when there is no mobile hamburger menu
+        @include breakpoint(tablet) {
+            overflow: visible;
+            transition: 0.4s; /* Adds a transition effect when the padding is decreased */
+            position: fixed; 
+            width: 100%;
+            top: 0;
+            z-index: 99; 
+        }
+
+        &.sticky {
+            box-shadow: 0 1px 10px rgb(239, 235, 230);
+
+            .header__nav--link {
+                font-size: em(16);
+            }
+
+            .header__logo-img {
+                @include breakpoint(tablet) {
+                    transition: 0.4s; /* Adds a transition effect when the padding is decreased */
+                    max-height: 90px;
+                    padding: 24px 0;
+                }
+            }
+
+            .header__dropdown--wrapper {
+                top: 90px;
+            }
+        }
+    }
 }
 
 .header {
@@ -68,6 +111,7 @@
             margin: 0 18px 25px;
             display: block;
             width: fit-content;
+            cursor: pointer;
 
             @include breakpoint(smalldesktop) {
                 display: flex;
@@ -95,23 +139,15 @@
             }
 
             &:after {
-                content: '';
-                position: absolute;
-                left: 0; 
-                bottom: -7px;
-                height: 2px;
-                background-color: $secondary-color;
-                width: 0;
-                transition: 
-                width .5s;
-            }
-
-            &:hover + .header__dropdown--wrapper,
-            &:focus + .header__dropdown--wrapper {
                 @include breakpoint(smalldesktop) {
-                    visibility: visible;
-                    opacity: 1;
-                    transition-delay: 0s; /* react immediately on hover */
+                    content: '';
+                    position: absolute;
+                    left: 0; 
+                    bottom: -7px;
+                    height: 2px;
+                    background-color: $secondary-color;
+                    width: 0;
+                    transition: width .5s;
                 }
             }
 
@@ -119,12 +155,41 @@
                 height: auto;
                 visibility: visible;
                 opacity: 1;
-                transition-delay: 0s; /* react immediately on hover */
                 padding: 0 50px 40px;
+                pointer-events: auto;
 
                 @include breakpoint(smalldesktop) {
                     padding: 30px;
                 }
+            }
+
+            &.active {
+                .header__nav--dropdown-parent {
+                    &::after {
+                        transition: all .3s ease-out;
+                        top: 2px;
+                        transform: rotate(135deg);
+                    }
+                }
+            }
+        }
+
+        &--dropdown-parent {
+
+            &::after {
+                transition: all .3s ease-out;
+                border-style: solid;
+                border-width: 1px 1px 0 0;
+                content: '';
+                display: inline-block;
+                height: 0.45em;
+                width: 0.45em;
+                position: relative;
+                top: 6px;
+                left: 15px;
+	            transform: rotate(315deg);
+                vertical-align: top;
+                color: $secondary-color;
             }
         }
     }
@@ -154,24 +219,10 @@
 
             visibility: hidden;
             opacity: 0;
-            transition: visibility 0s, opacity 0.5s linear;
-            transition: 0.2s 1s; /* delay of 1 seconds on hover off */
+            transition: visibility 0s, opacity 0.4s linear;
 
             /* prevent users from showing submenu when hovering hidden element */
-            pointer-events: none !important;
-
-            /* sub elements can be hovered */
-            & > * {
-                pointer-events: auto;
-            }
-
-            /* show submenu when trigger or menu itself is hovered */
-            &:hover,
-            &:focus {
-                opacity: 1;
-                transition-delay: 0s;
-                visibility: visible;
-            }
+            pointer-events: none;
         }
 
         &--container {
@@ -284,7 +335,7 @@ body:not(.page-template-frontpage) {
 
         &__dropdown--wrapper {
             @include breakpoint(smalldesktop) {
-                box-shadow: 0px 0px 5px 0px grey;
+                box-shadow: 0 -10px 0 #fff, 0 1px 10px rgb(239, 235, 230);
             }
         }
     }
@@ -406,7 +457,6 @@ body:not(.page-template-frontpage) {
         height: 2px;
         background-color: $secondary-color;
         width: 0;
-        transition: 
-        width .5s;
+        transition: width .5s;
     }
 }
