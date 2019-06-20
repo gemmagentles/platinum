@@ -47,6 +47,27 @@ h1 {
 }
 
 ************************/
+.full-screen-slider__wrapper .tns-nav {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  bottom: 40px;
+  width: 100%;
+  justify-content: center; }
+  .full-screen-slider__wrapper .tns-nav button {
+    padding: 20px;
+    color: #4A4A50;
+    color: #7b7b85;
+    font-family: Akzidenz-Grotesk BQ;
+    font-size: 1em;
+    line-height: 26px;
+    letter-spacing: 2px;
+    background: transparent;
+    border: none; }
+
+.full-screen-slider__wrapper .tns-nav-active {
+  color: white !important; }
+
 .full-screen-slider__wrapper [data-action='start'],
 .full-screen-slider__wrapper [data-action='stop'] {
   position: absolute;
@@ -142,23 +163,6 @@ h1 {
     background-size: cover; }
   .full-screen-slider__image {
     height: 100vh; }
-  .full-screen-slider__progress-nav {
-    position: absolute;
-    bottom: 60px;
-    color: #7b7b85;
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    font-family: Akzidenz-Grotesk BQ;
-    font-size: 1em;
-    line-height: 26px;
-    letter-spacing: 2px; }
-    .full-screen-slider__progress-nav div {
-      padding-right: 30px; }
-      .full-screen-slider__progress-nav div:last-child {
-        padding-right: 0; }
-    .full-screen-slider__progress-nav--current {
-      color: white; }
 
 body:not(.page-template-frontpage) main {
   padding-top: 75px; }

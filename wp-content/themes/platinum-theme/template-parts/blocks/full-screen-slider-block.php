@@ -21,18 +21,5 @@
     <?php else : ?>
         <?php // no rows found ?>
     <?php endif; ?>
-
-    <div class="full-screen-slider__progress-nav">
-    <?php if ( have_rows( 'slides' ) ) : ?>
-        <?php $count = 1; ?>
-        <?php while ( have_rows( 'slides' ) ) : the_row(); ?>
-        <div>0<?php echo $count; ?></div>
-        <?php $count++; ?>
-        <?php endwhile; ?>
-    </div>
-    <?php else : ?>
-        <?php // no rows found ?>
-    <?php endif; ?>
-    </div>
 </div>
     
