@@ -49,7 +49,7 @@ h1 {
 ************************/
 .full-screen-slider__wrapper .tns-nav {
   position: absolute;
-  z-index: 2;
+  z-index: 1;
   display: flex;
   bottom: 40px;
   width: 100%;
@@ -98,7 +98,7 @@ h1 {
   width: 100%;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 2; }
+  z-index: 1; }
 
 .full-screen-slider__wrapper [data-controls='prev'],
 .full-screen-slider__wrapper [data-controls='next'] {
