@@ -53,6 +53,21 @@ section {
       top: 5px;
       left: 100%;
       margin-left: 20px;
+
+      @include breakpoint(tablet) {
+        opacity: 0;
+
+        @keyframes linegrow {
+            0%   { width: 0; opacity: 0; }
+            100% { width: 70px; opacity: 1; }
+        }
+
+        animation: linegrow 4s;
+        animation-fill-mode: forwards;
+        animation-iteration-count: 1;
+        animation-duration: 2s;
+        animation-timing-function: ease-in-out;
+      }
   }
 }
 
