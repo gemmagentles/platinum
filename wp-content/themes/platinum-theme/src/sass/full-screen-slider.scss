@@ -1,4 +1,29 @@
 .full-screen-slider__wrapper {
+    .tns-nav {
+        position: absolute;
+        z-index: 2;
+        display: flex;
+        bottom: 40px;
+        width: 100%;
+        justify-content: center;
+
+        button {
+            padding: 20px;
+            color: $heading-font-color;
+            color: lighten($heading-font-color, 20%);
+            font-family: $secondary-font-family;
+            font-size: em(16);
+            line-height: 26px;
+            letter-spacing: 2px;
+            background: transparent;
+            border: none;
+        }
+    }
+
+    .tns-nav-active {
+        color: white !important;
+    }
+
     [data-action='start'],
     [data-action='stop'] {
         position: absolute;
@@ -118,26 +143,4 @@
     &__image {
         height: 100vh;
     }
-
-    &__progress-nav {
-        position: absolute;
-        bottom: 60px;
-        color: lighten($heading-font-color, 20%);
-        display: flex;
-        justify-content: center;
-        width: 100%;
-        font-family: $secondary-font-family;
-        font-size: em(16);
-        line-height: 26px;
-        letter-spacing: 2px;
-        
-        div {
-            padding-right: 30px;
-
-            &:last-child {
-                padding-right: 0;
-            }
-        }
-    }
-
 }

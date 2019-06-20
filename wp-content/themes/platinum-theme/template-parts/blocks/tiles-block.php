@@ -5,9 +5,9 @@
             <?php if ( have_rows( 'tile' ) ) : ?>
                 <div class="tiles__grid">
                     <?php while ( have_rows( 'tile' ) ) : the_row(); ?>
-                        <div class="tiles__tile--background" style="background-image: url('<?php the_sub_field( 'background_image' ); ?>');">
+                        <div  class="tiles__tile--background" style="background-image: url('<?php the_sub_field( 'background_image' ); ?>');">
                             <div class="tiles__tile--container">
-                                <h3 class="tiles__tile--heading"><?php the_sub_field( 'heading' ); ?></h3>
+                                <h3 data-aos="fade-up" class="tiles__tile--heading"><?php the_sub_field( 'heading' ); ?></h3>
                                 <p class="tiles__tile--paragraph"><?php the_sub_field( 'paragraph' ); ?></p>
                             </div>
                         </div>

@@ -5,7 +5,7 @@
             <?php $image = get_sub_field( 'image' ); ?>
             <?php if ( $image ) { ?>
                 <div class="cards-with-captions__image-wrapper">
-                    <img class="cards-with-captions__image" src="<?php echo $image['url']; ?>" alt="<?php echo $image['alt']; ?>" />
+                    <img data-aos="fade-up" data-aos-easing="ease-in" data-aos-duration="550" class="cards-with-captions__image" src="<?php echo $image['url']; ?>" alt="<?php echo $image['alt']; ?>" />
                     <div class="cards-with-captions__hover-paragraph">
                         <?php the_sub_field( 'hover_paragraph' ); ?>
                     </div>
