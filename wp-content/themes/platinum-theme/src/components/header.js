@@ -12,7 +12,7 @@ $(document).ready(function(){
     });
 
     $(".header__nav--link").click(function(){
-        $( this ).addClass("active");
+        $( this ).toggleClass("active");
     });
 
     // When the user scrolls down 80px from the top of the document, make the nav bar smaller

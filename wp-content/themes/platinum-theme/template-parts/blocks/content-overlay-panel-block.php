@@ -5,7 +5,7 @@
                 <div class="content-overlay-panel__image-wrapper">
                     <?php $background_image = get_sub_field( 'background_image' ); ?>
                     <?php if ( $background_image ) { ?>
-                        <img class="content-overlay-panel__image" src="<?php echo $background_image['url']; ?>" alt="<?php echo $background_image['alt']; ?>" />
+                        <img data-aos="fade-left" data-aos-easing="ease-in" data-aos-duration="550" class="content-overlay-panel__image" src="<?php echo $background_image['url']; ?>" alt="<?php echo $background_image['alt']; ?>" />
                     <?php } ?>
                 </div>
                 <div class="content-overlay-panel__text-wrapper">

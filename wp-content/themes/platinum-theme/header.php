@@ -8,6 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.1/min/tiny-slider.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.1/tiny-slider.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.1/tiny-slider.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.1/min/tiny-slider.js"></script>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -39,7 +40,7 @@
                         <?php if ( get_sub_field( 'drop_down_option' ) == 1 ) { 
                         // echo 'true'; 
                         // if there is a drop down menu make the parent link just text so it does not link off to anywhere
-                        ?><div class="header__nav--link"><?php the_sub_field( 'menu_item_name' ); ?></div><?php
+                        ?><div class="header__nav--link"><div class="header__nav--dropdown-parent"><?php the_sub_field( 'menu_item_name' ); ?></div></div><?php
                         } else { 
                         // echo 'false'; 
                         ?><a class="header__nav--link" href="<?php the_sub_field( 'menu_item_link' ); ?>"><?php the_sub_field( 'menu_item_name' ); ?></a><?php

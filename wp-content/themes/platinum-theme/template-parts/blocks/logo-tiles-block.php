@@ -11,7 +11,7 @@
                     <?php $link = get_sub_field( 'logo_link' ); ?>
                     <?php if ( $logo ) { ?>
                         <?php if ( $link ) { ?><a href="<?php echo $link; ?>" target="_blank"><?php } ?>
-                            <img class="logo-tiles__logo" src="<?php echo $logo['url']; ?>" alt="<?php echo $logo['alt']; ?>" />
+                            <img data-aos="fade-up" class="logo-tiles__logo" src="<?php echo $logo['url']; ?>" alt="<?php echo $logo['alt']; ?>" />
                         <?php if ( $link ) { ?></a><?php } ?>
                     <?php } ?>
                 </div>
