@@ -535,7 +535,9 @@ body:not(.page-template-frontpage) .header {
     bottom: -7px;
     height: 2px;
     background-color: #C1AD93;
-    width: 48px; }
+    width: 48px;
+    right: calc(50% - 24px);
+    transform: translateY(-50%); }
 
 .intro-panel__paragraph {
   padding-top: 50px;
