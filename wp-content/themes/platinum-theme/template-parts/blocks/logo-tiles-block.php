@@ -1,8 +1,11 @@
 <?php if ( have_rows( 'logo_tiles_block' ) ) : ?>
 <div class="logo-tiles__wrapper">
     <?php while ( have_rows( 'logo_tiles_block' ) ) : the_row(); ?>
-		<h2 class="logo-tiles__heading"><?php the_sub_field( 'heading' ); ?></h2>
-		<div class="logo-tiles__paragraph"><?php the_sub_field( 'paragraph' ); ?></div>
+        <h2 class="logo-tiles__heading"><?php the_sub_field( 'heading' ); ?></h2>
+        <?php $paragraph = get_sub_field( 'paragraph' ); ?>
+        <?php if ( $paragraph ) { ?>
+            <div class="logo-tiles__paragraph"><?php the_sub_field( 'paragraph' ); ?></div>
+        <?php } ?>
 		<?php if ( have_rows( 'tile' ) ) : ?>
         <div class="logo-tiles__grid">
 			<?php while ( have_rows( 'tile' ) ) : the_row(); ?>
