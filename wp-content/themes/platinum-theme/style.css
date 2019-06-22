@@ -1065,8 +1065,14 @@ body:not(.page-template-frontpage) .header {
 .logo-tiles__heading, .logo-tiles__paragraph {
   text-align: center; }
 
+.logo-tiles__heading {
+  padding: 0 0 40px; }
+  @media (min-width: 64em) {
+    .logo-tiles__heading {
+      padding: 0 0 80px; } }
+
 .logo-tiles__paragraph {
-  padding: 40px 0 80px;
+  padding: 40px 0 0;
   max-width: 690px;
   margin: 0 auto; }
 
