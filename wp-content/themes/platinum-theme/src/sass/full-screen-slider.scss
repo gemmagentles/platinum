@@ -3,9 +3,13 @@
         position: absolute;
         z-index: 1;
         display: flex;
-        bottom: 40px;
+        bottom: 20px;
         width: 100%;
         justify-content: center;
+
+        @include breakpoint(smalldesktop) {
+            bottom: 40px;
+        }
 
         button {
             padding: 20px;
@@ -28,17 +32,22 @@
     [data-action='stop'] {
         position: absolute;
         right: 40px;
-        bottom: 60px;
+        bottom: 45px;
         z-index: 2;
         background: transparent;
         border: none;
         background-repeat: no-repeat;
         color: transparent;
         max-width: 30px;
-        max-height: 24px;
+        max-height: 18px;
         width: 100%;
         height: 100%;
         background-size: contain;
+
+        @include breakpoint(smalldesktop) {
+            bottom: 60px;
+            max-height: 24px;
+        }
     }
 
     [data-action='start'] {
@@ -94,7 +103,8 @@
 
 .full-screen-slider {
     position: relative;
-    height: 100vh;
+    height: 100vh; /* Fallback for browsers that do not support Custom Properties */
+    height: calc(var(--vh, 1vh) * 100); // calculate actual height of screen with apple nav bar.
 
     &__content {
         max-width: 590px;

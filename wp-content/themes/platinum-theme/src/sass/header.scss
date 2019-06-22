@@ -34,7 +34,9 @@ body:not(.page-template-frontpage) {
             box-shadow: 0 1px 10px rgb(239, 235, 230);
 
             .header__nav--link {
-                font-size: em(16);
+                @include breakpoint(smalldesktop) {
+                    font-size: em(16);
+                }
             }
 
             .header__logo-img {
@@ -46,7 +48,9 @@ body:not(.page-template-frontpage) {
             }
 
             .header__dropdown--wrapper {
-                top: 90px;
+                @include breakpoint(smalldesktop) {
+                    top: 90px;
+                }
             }
         }
     }
@@ -435,9 +439,21 @@ body:not(.page-template-frontpage) {
   z-index: 99;
   opacity: 1;
   padding: 90px 10px;
+  overflow-y: auto;
 
   @keyframes slidein {
     from {left: -100%;}
+  }
+
+  &::before {
+    content: "";
+    position: fixed;
+    height: 75px;
+    border-bottom: 75px solid $primary-color;
+    width: 100%;
+    top: -75px;
+    left: 0;
+    z-index: 3;
   }
 
   &--link {

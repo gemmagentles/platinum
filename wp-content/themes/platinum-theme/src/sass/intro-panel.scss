@@ -28,6 +28,9 @@
             height: 2px;
             background-color: $secondary-color;
             width: 48px;
+            // fallback for when justify content center flex does not work, minus half the width since the 50% mark will start where the div starts rather than center of the div. 
+            right: calc(50% - 24px);
+            transform: translateY(-50%);
         }
     }
 
