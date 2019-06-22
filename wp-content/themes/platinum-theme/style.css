@@ -1410,6 +1410,14 @@ body {
 section {
   position: relative; }
 
+a[href^=tel] {
+  color: #29292B;
+  text-decoration: none; }
+
+.footer a[href^=tel] {
+  color: white;
+  text-decoration: none; }
+
 .subtitle {
   position: relative;
   text-transform: uppercase;
