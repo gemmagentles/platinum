@@ -19,7 +19,7 @@
                 width: 30%;
             }
 
-            @include breakpoint(desktop) {
+            @include breakpoint(largedesktop) {
                 width: 50%;
             }
         }
@@ -31,9 +31,10 @@
                 display: flex;
                 justify-content: space-between;
                 width: 70%;
+                padding-top: 68px;
             }
 
-            @include breakpoint(desktop) {
+            @include breakpoint(largedesktop) {
                 width: 50%;
             }
         }
@@ -61,6 +62,11 @@
 
     &__contact {
         color: white;
+        
+        @include breakpoint(smalldesktop) {
+            max-width: 260px;
+            padding-right: 40px;
+        }
 
         &--phone {
             font-size: em(14);
@@ -91,13 +97,19 @@
                 }
             }
         }
+
+        &--address {
+            font-size: em(14);
+            letter-spacing: 1.01px;
+            padding: 10px 0;
+        }
     }
 
     &__nav {
         padding: 40px 0;
 
         @include breakpoint(smalldesktop) {
-            padding: 0;
+            padding: 0 40px 0 0;
         }
 
         ul {

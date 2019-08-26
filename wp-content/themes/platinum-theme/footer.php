@@ -12,6 +12,7 @@
 							<div class="footer__contact">
 								<p class="footer__contact--phone"><?php the_field( 'contact_info_phone_number', 'option' ); ?></p>
 								<a class="footer__contact--email" href="mailto:<?php the_field( 'contact_info_email', 'option' ); ?>" target="_top"><?php the_field( 'contact_info_email', 'option' ); ?></a>
+								<p class="footer__contact--address"><?php the_field( 'contact_info_address', 'option' ); ?></p>
 							</div>
 							<div class="footer__nav">
 								<?php footer_nav(); ?>
