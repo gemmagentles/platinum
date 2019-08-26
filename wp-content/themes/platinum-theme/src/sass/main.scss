@@ -76,7 +76,8 @@ a[href^=tel]{ color:$font-color; text-decoration:none;}
   }
 }
 
-p {
+p,
+ul li {
   font-size: em(16);
   line-height: 28px;
   letter-spacing: 0.55px;

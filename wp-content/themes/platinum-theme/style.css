@@ -1466,13 +1466,15 @@ a[href^=tel] {
           width: 70px;
           opacity: 1; } } }
 
-p {
+p,
+ul li {
   font-size: 1em;
   line-height: 28px;
   letter-spacing: 0.55px;
   font-family: Akzidenz-Grotesk BQ; }
   @media (min-width: 64em) {
-    p {
+    p,
+    ul li {
       font-size: 1.125em;
       line-height: 32px; } }
 
