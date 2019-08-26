@@ -2,6 +2,9 @@
 
 namespace WPGMZA;
 
+if(!defined('ABSPATH'))
+	return;
+
 require_once(plugin_dir_path(__FILE__) . 'class.selector-to-xpath.php');
 
 class DOMElement extends \DOMElement
@@ -11,6 +14,20 @@ class DOMElement extends \DOMElement
 	public function __construct()
 	{
 		\DOMElement::__construct();
+	}
+	
+	public function __get($name)
+	{
+		switch($name)
+		{
+			case "html":
+				
+				return $this->ownerDocument->saveHTML( $this );
+			
+				break;
+		}
+		
+		return \DOMElement::__get($name);
 	}
 	
 	/**
@@ -241,7 +258,7 @@ class DOMElement extends \DOMElement
 			if(empty($subject))
 				return;
 			
-			if($subject != strip_tags($subject))
+			if($subject != strip_tags($subject) || preg_match('/&.+;/', $subject))
 			{
 				// Subject is a HTML string
 				$html = DOMDocument::convertUTF8ToHTMLEntities($subject);

@@ -343,7 +343,7 @@ class ImportCSV extends Import {
 	 * @return string Options html.
 	 */
 	public function admin_options() {
-
+		
 		$doing_edit = ! empty( $_POST['schedule_id'] ) ? true : false;
 
 		$source = !empty( $this->file ) ? esc_html( basename( $this->file ) ) : ( ! empty( $this->file_url ) ? esc_html( $this->file_url ) : '' );
