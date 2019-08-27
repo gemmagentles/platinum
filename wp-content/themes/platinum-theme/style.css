@@ -649,8 +649,7 @@ body:not(.page-template-frontpage) .header {
     .footer__nav {
       padding: 0 40px 0 0; } }
   .footer__nav ul {
-    list-style-type: none;
-    padding-top: 5px; }
+    list-style-type: none; }
   .footer__nav li {
     padding-bottom: 18px; }
   .footer__nav li a {
@@ -1578,4 +1577,3 @@ BUTTON
   background-color: white;
   border: none;
   cursor: pointer; }
-
