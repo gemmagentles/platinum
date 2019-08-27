@@ -2,6 +2,9 @@
 
 namespace WPGMZA;
 
+if(!defined('ABSPATH'))
+	return;
+
 // TODO: Remove, an autoloader is now used
 require_once(plugin_dir_path(__FILE__) . 'google-maps/class.google-maps-loader.php');
 require_once(plugin_dir_path(__FILE__) . 'open-layers/class.ol-loader.php');
@@ -40,6 +43,9 @@ class ScriptLoader
 			$this->scriptsFileLocation = plugin_dir_path(WPGMZA_PRO_FILE) . 'js/v8/pro-scripts.json';
 		else
 			$this->scriptsFileLocation = plugin_dir_path(__DIR__) . 'js/v8/scripts.json';
+
+		if (function_exists('add_filter')) 
+			add_filter('wpgmza-get-library-dependencies', array($this, 'dequeueDataTablesScript'), 10, 1);
 	}
 	
 	/**
@@ -604,5 +610,24 @@ class ScriptLoader
 		$data = $wpgmza->getLocalizedData();
 
 		wp_localize_script('wpgmza', 'WPGMZA_localized_data', $data);
+	}
+
+	/**
+	 * Dequeues the datatables if the setting is enabled
+	 * @return array
+	 */
+	public function dequeueDataTablesScript($dep)
+	{
+		global $wpgmza;
+
+		if (!empty($wpgmza->settings->wpgmza_do_not_enqueue_datatables)) 
+		{
+			if (!empty($dep['datatables'])) 
+			{
+				unset($dep['datatables']);
+			}
+		}
+
+		return $dep;
 	}
 }

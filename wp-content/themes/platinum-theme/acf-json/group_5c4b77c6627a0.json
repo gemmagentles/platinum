@@ -58,6 +58,25 @@
             "maxlength": ""
         },
         {
+            "key": "field_5d64313c44ae5",
+            "label": "Contact Info: Address",
+            "name": "contact_info_address",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "maxlength": ""
+        },
+        {
             "key": "field_5c4b7e776123f",
             "label": "Social Media Information",
             "name": "",
@@ -149,5 +168,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1559070119
+    "modified": 1566847370
 }

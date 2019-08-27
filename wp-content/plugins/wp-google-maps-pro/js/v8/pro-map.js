@@ -182,8 +182,6 @@ jQuery(function($) {
 		
 		WPGMZA.watchPosition(function(position) {
 			
-			self.userLocationMarker = marker;
-			
 			marker.setPosition({
 				lat: position.coords.latitude,
 				lng: position.coords.longitude
@@ -191,6 +189,12 @@ jQuery(function($) {
 			
 			if(!marker.map)
 				self.addMarker(marker);
+			
+			if(!self.userLocationMarker)
+			{
+				self.userLocationMarker = marker;
+				self.trigger("userlocationmarkerplaced");
+			}
 			
 		});
 	}

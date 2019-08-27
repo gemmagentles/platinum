@@ -60,24 +60,40 @@ jQuery(function($) {
 		"get": function() {
 			var dropdown, checkboxes, value, results;
 			
-			if((dropdown = $(this.element).find(".wpgmza_sl_category_div > select")).length)
-			{
-				value = dropdown.val();
-				
-				if(value == "0")
-					return null;
-				
-				return [value];
-			}
+			var isModernStyle = $(this.map.element).find(".wpgmza-modern-store-locator").length > 0;
 			
-			$(this.element).find(".wpgmza_sl_category_div :checked").each(function(index, el) {
+			if(isModernStyle)
+			{
+				$(this.map.element).find(".wpgmza-modern-store-locator [name='wpgmza_cat_checkbox']:checked").each(function(index, el) {
+					
+					if(!results)
+						results = [];
+					
+					results.push( $(el).val() );
+					
+				});
+			}
+			else
+			{
+				if((dropdown = $(this.element).find(".wpgmza_sl_category_div > select")).length)
+				{
+					value = dropdown.val();
+					
+					if(value == "0")
+						return null;
+					
+					return [value];
+				}
 				
-				if(!results)
-					results = [];
-				
-				results.push( $(el).val() );
-				
-			});
+				$(this.element).find(".wpgmza_sl_category_div :checked").each(function(index, el) {
+					
+					if(!results)
+						results = [];
+					
+					results.push( $(el).val() );
+					
+				});
+			}
 			
 			return results;
 		}
@@ -153,7 +169,7 @@ jQuery(function($) {
 			if(this._circle)
 				return this._circle;
 			
-			if(this.map.settings.wpgmza_store_locator_radius_style == "modern")
+			if(!WPGMZA.isDeviceiOS() && this.map.settings.wpgmza_store_locator_radius_style == "modern")
 			{
 				this._circle = WPGMZA.ModernStoreLocatorCircle.createInstance(this.map.id);
 				this._circle.settings.color = this.circleStrokeColor;

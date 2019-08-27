@@ -4,6 +4,15 @@ namespace WPGMZA;
 
 class ProMarker extends Marker
 {
+	// NB: Properties must be explicitly declared on the class to stop them being written into other_data as arbitrary data
+	protected $original_icon;
+	protected $icon;
+	
+	protected $categories;
+	
+	protected $customFields;
+	protected $custom_fields;
+
 	public function __construct($id_or_fields=-1)
 	{
 		Marker::__construct($id_or_fields);
@@ -133,10 +142,14 @@ class ProMarker extends Marker
 				
 				foreach($categories as $category_id)
 				{
+					if($category_id == "0")
+						continue;
+					
 					$stmt = $wpdb->prepare("INSERT INTO $WPGMZA_TABLE_NAME_MARKERS_HAS_CATEGORIES
 						(marker_id, category_id) 
 						VALUES 
 						(%d, %d)", array($this->id, $category_id));
+						
 					$wpdb->query($stmt);
 				}
 				

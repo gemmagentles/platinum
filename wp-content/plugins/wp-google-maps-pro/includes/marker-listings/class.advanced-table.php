@@ -119,8 +119,9 @@ class AdvancedTable extends \WPGMZA\MarkerDataTable
 		if(!$exclude_columns)
 			$exclude_columns = array();
 		
-		if(isset($input_params['overrideMarkerIDs']) || isset($input_params['markerIDs']))
-			return "";
+		// TODO: Removed, this stops search from working with store locator, not quite sure why this was added in the first place.
+		//if(isset($input_params['overrideMarkerIDs']) || isset($input_params['markerIDs']))
+			//return "";
 		
 		if(empty($input_params['search']['value']))
 			return "";

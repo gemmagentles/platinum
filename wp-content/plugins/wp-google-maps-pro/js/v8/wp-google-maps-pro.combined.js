@@ -51,7 +51,7 @@ jQuery(function($) {
 		 * @return {number} The scroll offset
 		 */
 		getScrollAnimationOffset: function() {
-			return (WPGMZA.settings.scroll_animation_offset || 0);
+			return (WPGMZA.settings.scroll_animation_offset || 0) + $("#wpadminbar").height();
 		},
 		
 		/**
@@ -479,14 +479,15 @@ jQuery(function($) {
 			
 			if(WPGMZA.isProVersion())
 				return MYMAP[id].map;
+			
 			return MYMAP.map;
 			
-			for(var i = 0; i < WPGMZA.maps.length; i++) {
+			/*for(var i = 0; i < WPGMZA.maps.length; i++) {
 				if(WPGMZA.maps[i].id == id)
 					return WPGMZA.maps[i];
 			}
 			
-			return null;
+			return null;*/
 		},
 		
 		/**
@@ -553,7 +554,7 @@ jQuery(function($) {
 		
 		getQueryParamValue: function(name) {
 			
-			var regex = new RegExp(name + "=([^&]*)");
+			var regex = new RegExp(name + "=([^&#]*)");
 			var m;
 			
 			if(!(m = window.location.href.match(regex)))
@@ -604,6 +605,13 @@ jQuery(function($) {
 	
 	$(window).on("load", function(event) {
 		
+		// Array incorrectly extended warning
+		var test = [];
+		for(var key in test) {
+			console.warn("The Array object has been extended incorrectly by your theme or another plugin. This can cause issues with functionality.");
+			break;
+		}
+		
 		// Geolocation warnings
 		if(window.location.protocol != 'https:')
 		{
@@ -615,8 +623,6 @@ jQuery(function($) {
 		}
 		
 	});
-	
-	
 	
 });
 
@@ -1013,6 +1019,7 @@ jQuery(function($) {
 		var averageDeltaLog = Math.log2(averageDelta);
 		var lowBitsLength = Math.floor(averageDeltaLog);
 		var lowBitsMask = (1 << lowBitsLength) - 1;
+		var prev = null;
 		
 		var maxCompressedSize = Math.floor(
 			(
@@ -1039,6 +1046,10 @@ jQuery(function($) {
 		list.forEach(function(docID) {
 			
 			var docIDDelta = (docID - lastDocID - 1);
+			
+			if(prev !== null && docID <= prev)
+				throw new Error("Elias Fano encoding can only be used on a sorted, ascending list of unique integers.");
+			prev = docID;
 			
 			buffer1 <<= lowBitsLength;
 			buffer1 |= (docIDDelta & lowBitsMask);
@@ -1325,7 +1336,15 @@ jQuery(function($) {
 		for(i = path.length - 1; i >= 0 && !event._cancelled; i--)
 			path[i]._triggerListeners(event);
 		
-		if(this.element)
+		// Native DOM event
+		var topMostElement = this.element;
+		for(var obj = this.parent; obj != null; obj = obj.parent)
+		{
+			if(obj.element)
+				topMostElement = obj.element;
+		}
+		
+		if(topMostElement)
 		{
 			var customEvent = {};
 			
@@ -1339,7 +1358,7 @@ jQuery(function($) {
 				customEvent[key] = value;
 			}
 			
-			$(this.element).trigger(customEvent);
+			$(topMostElement).trigger(customEvent);
 		}
 	}
 
@@ -1890,7 +1909,7 @@ jQuery(function($) {
 		
 		this.mapObject = mapObject;
 		
-		if(WPGMZA.settings.disable_infowindows)
+		if(WPGMZA.settings.disable_infowindows || WPGMZA.settings.wpgmza_settings_disable_infowindows == "1")
 			return false;
 		
 		if(this.mapObject.disableInfoWindow)
@@ -3232,6 +3251,9 @@ jQuery(function($) {
 		if(marker.map !== this)
 			throw new Error("Wrong map error");
 		
+		if(marker.infoWindow)
+			marker.infoWindow.close();
+		
 		marker.map = null;
 		marker.parent = null;
 		
@@ -3645,7 +3667,8 @@ jQuery(function($) {
 			method: "POST",
 			data: {
 				action: "wpgmza_maps_engine_dialog_set_engine",
-				engine: $("[name='wpgmza_maps_engine']:checked").val()
+				engine: $("[name='wpgmza_maps_engine']:checked").val(),
+				nonce: $("#wpgmza-maps-engine-dialog").attr("data-ajax-nonce")
 			},
 			success: function(response, status, xhr) {
 				window.location.reload();
@@ -4907,7 +4930,12 @@ jQuery(function($) {
 	WPGMZA.RestAPI = function()
 	{
 		WPGMZA.RestAPI.URL = WPGMZA.resturl;
+		
+		this.useAJAXFallback = false;
 	}
+	
+	WPGMZA.RestAPI.CONTEXT_REST		= "REST";
+	WPGMZA.RestAPI.CONTEXT_AJAX		= "AJAX";
 	
 	/**
 	 * Creates an instance of a RestAPI, <strong>please <em>always</em> use this function rather than calling the constructor directly</strong>.
@@ -4969,8 +4997,79 @@ jQuery(function($) {
 		}).join("");
 		
 		var base64		= btoa(raw);
-		
 		return base64.replace(/\//g, "-") + suffix;
+	}
+	
+	function sendAJAXFallbackRequest(route, params)
+	{
+		var params = $.extend({}, params);
+		
+		if(!params.data)
+			params.data = {};
+		
+		if("route" in params.data)
+			throw new Error("Cannot send route through this method");
+		
+		if("action" in params.data)
+			throw new Error("Cannot send action through this method");
+		
+		params.data.route = route;
+		params.data.action = "wpgmza_rest_api_request";
+		
+		WPGMZA.restAPI.addNonce(route, params, WPGMZA.RestAPI.CONTEXT_AJAX);
+		
+		return $.ajax(WPGMZA.ajaxurl, params);
+	}
+	
+	WPGMZA.RestAPI.prototype.getNonce = function(route)
+	{
+		var matches = [];
+		
+		for(var pattern in WPGMZA.restnoncetable)
+		{
+			var regex = new RegExp(pattern);
+			
+			if(route.match(regex))
+				matches.push({
+					pattern: pattern,
+					nonce: WPGMZA.restnoncetable[pattern],
+					length: pattern.length
+				});
+		}
+		
+		if(!matches.length)
+			throw new Error("No nonce found for route");
+		
+		matches.sort(function(a, b) {
+			return b.length - a.length;
+		});
+		
+		return matches[0].nonce;
+	}
+	
+	WPGMZA.RestAPI.prototype.addNonce = function(route, params, context)
+	{
+		var self = this;
+		
+		var setRESTNonce = function(xhr) {
+			if(context == WPGMZA.RestAPI.CONTEXT_REST)
+				xhr.setRequestHeader('X-WP-Nonce', WPGMZA.restnonce);
+			
+			if(params && params.method && !params.method.match(/^GET$/i))
+				xhr.setRequestHeader('X-WPGMZA-Action-Nonce', self.getNonce(route));
+		};
+		
+		if(!params.beforeSend)
+			params.beforeSend = setRESTNonce;
+		else
+		{
+			var base = params.beforeSend;
+			
+			params.beforeSend = function(xhr) {
+				base(xhr);
+				setRESTNonce(xhr);
+			}
+		}
 	}
 	
 	/**
@@ -4982,6 +5081,10 @@ jQuery(function($) {
 	 */
 	WPGMZA.RestAPI.prototype.call = function(route, params)
 	{
+		if(this.useAJAXFallback)
+			return sendAJAXFallbackRequest(route, params);
+		
+		var self = this;
 		var attemptedCompressedPathVariable = false;
 		var fallbackRoute = route;
 		var fallbackParams = $.extend({}, params);
@@ -4995,23 +5098,40 @@ jQuery(function($) {
 		if(!params)
 			params = {};
 		
-		params.beforeSend = function(xhr) {
-			xhr.setRequestHeader('X-WP-Nonce', WPGMZA.restnonce);
-		};
+		this.addNonce(route, params, WPGMZA.RestAPI.CONTEXT_REST);
 		
 		if(!params.error)
 			params.error = function(xhr, status, message) {
 				if(status == "abort")
 					return;	// Don't report abort, let it happen silently
 				
-				if(xhr.status == 414 && attemptedCompressedPathVariable)
+				switch(xhr.status)
 				{
-					console.log("Should retry request with POST method");
+					case 401:
+					case 403:
+						// Report back to the server. This is usually due to a security plugin blocking REST requests for non-authenticated users
+						$.post(WPGMZA.ajaxurl, {
+							action: "wpgmza_report_rest_api_blocked"
+						}, function(response) {});
+						
+						console.warn("The REST API was blocked. This is usually due to security plugins blocking REST requests for non-authenticated users.");
+						
+						this.useAJAXFallback = true;
+						
+						return sendAJAXFallbackRequest(fallbackRoute, fallbackParams);
+						break;
 					
-					fallbackParams.method = "POST";
-					fallbackParams.useCompressedPathVariable = false;
+					case 414:
+						if(!attemptedCompressedPathVariable)
+							break;
 					
-					return WPGMZA.restAPI.call(fallbackRoute, fallbackParams);
+						// Fallback for HTTP 414 - Request too long with compressed requests
+						fallbackParams.method = "POST";
+						fallbackParams.useCompressedPathVariable = false;
+						
+						return WPGMZA.restAPI.call(fallbackRoute, fallbackParams);
+					
+						break;
 				}
 				
 				throw new Error(message);
@@ -5021,11 +5141,16 @@ jQuery(function($) {
 		{
 			var compressedParams = $.extend({}, params);
 			var data = params.data;
+			var compressedRoute = route.replace(/\/$/, "") + "/base64" + this.compressParams(data);
+			var fullCompressedRoute = WPGMZA.RestAPI.URL + compressedRoute;
 			
+			compressedParams.method = "GET";
 			delete compressedParams.data;
 			
-			var compressedRoute = route + "/base64" + this.compressParams(data);
-			var fullCompressedRoute = WPGMZA.RestAPI.URL + compressedRoute;
+			if(params.cache === false)
+				compressedParams.data = {
+					skip_cache: 1
+				};
 			
 			if(compressedRoute.length < this.maxURLLength)
 			{
@@ -5036,6 +5161,7 @@ jQuery(function($) {
 			}
 			else
 			{
+				// Fallback for when URL exceeds predefined length limit
 				if(!WPGMZA.RestAPI.compressedPathVariableURLLimitWarningDisplayed)
 					console.warn("Compressed path variable route would exceed URL length limit");
 				
@@ -5053,25 +5179,17 @@ jQuery(function($) {
 		
 		nativeCallFunction.apply(this, arguments);
 	}
-	
-	/*$(window).on("load", function(event) {
+
+	$(document.body).on("click", "#wpgmza-rest-api-blocked button.notice-dismiss", function(event) {
 		
-		var arr = [];
-		
-		for(var i = 0; i < 2048; i++)
-			arr.push(Math.random());
-		
-		WPGMZA.restAPI.call("/test", {
-			
-			useCompressedPathVariable: true,
+		WPGMZA.restAPI.call("/rest-api/", {
 			method: "POST",
 			data: {
-				test: arr
+				dismiss_blocked_notice: true
 			}
-			
 		});
 		
-	});*/
+	});
 	
 });
 
@@ -5713,7 +5831,7 @@ jQuery(function($) {
 	
 	// https://developers.google.com/maps/documentation/javascript/customoverlays
 	
-	if(WPGMZA.settings.engine != "google-maps")
+	if(WPGMZA.settings.engine && WPGMZA.settings.engine != "google-maps")
 		return;
 	
 	if(!window.google || !window.google.maps)
@@ -6104,7 +6222,7 @@ jQuery(function($) {
 			left: position.x + "px",
 			top: position.y + "px"
 		});
-		
+
 		var panes = this.getPanes();
 		panes.floatPane.appendChild(this.element[0]);
 	}
@@ -6666,14 +6784,14 @@ jQuery(function($) {
 		
 		return Math.abs(outerPixels.x - centerPixels.x);
 
-		if(!window.testMarker){
+		/*if(!window.testMarker){
 			window.testMarker = WPGMZA.Marker.createInstance({
 				position: outer
 			});
 			WPGMZA.maps[0].addMarker(window.testMarker);
 		}
 		
-		return 100;
+		return 100;*/
 	}
 	
 	WPGMZA.OLModernStoreLocatorCircle.prototype.getScale = function()
@@ -6847,7 +6965,14 @@ jQuery(function($) {
 	
 	WPGMZA.DataTable = function(element)
 	{
-		$.fn.dataTable.ext.errMode = "throw";
+		if($.fn.dataTable.ext)
+			$.fn.dataTable.ext.errMode = "throw";
+		else
+		{
+			var version = $.fn.dataTable.version ? $.fn.dataTable.version : "unknown";
+			
+			console.log("You appear to be running an outdated or modified version of the dataTables library. This may cause issues with table functionality. This is usually caused by 3rd party software loading an older version of DataTables. The loaded version is " + version + ", we recommend version 1.10.12 or above.");
+		}
 		
 		this.element = element;
 		this.element.wpgmzaDataTable = this;
@@ -6859,404 +6984,31 @@ jQuery(function($) {
 		this.dataTable			= $(this.dataTableElement).DataTable(settings);
 		this.wpgmzaDataTable	= this;
 		
+		this.useCompressedPathVariable = (WPGMZA.restAPI.isCompressedPathVariableSupported && WPGMZA.settings.enable_compressed_path_variables);
+		this.method = (this.useCompressedPathVariable ? "GET" : "POST");
+		
 		this.dataTable.ajax.reload();
 	}
+	
+	Object.defineProperty(WPGMZA.DataTable.prototype, "canSendCompressedRequests", {
+		
+		"get": function() {
+			
+			return (
+				WPGMZA.serverCanInflate == 1 && 
+				"Uint8Array" in window && 
+				"TextEncoder" in window && 
+				!WPGMZA.settings.forceDatatablesPOST && 
+				WPGMZA.settings.useCompressedDataTablesRequests
+			);
+			
+		}
+		
+	});
 	
 	WPGMZA.DataTable.prototype.getDataTableElement = function()
 	{
 		return $(this.element).find("table");
-	}
-	
-	WPGMZA.DataTable.prototype.getDataTableSettings = function()
-	{
-		var self = this;
-		var element = this.element;
-		var options = {};
-		var route;
-		var url;
-		var draw;
-		
-		var useCompressedPathVariable = (WPGMZA.restAPI.isCompressedPathVariableSupported && WPGMZA.settings.enable_compressed_path_variables);
-		var method = useCompressedPathVariable ? "GET" : "POST";
-		
-		if($(element).attr("data-wpgmza-datatable-options"))
-			options = JSON.parse($(element).attr("data-wpgmza-datatable-options"));
-		
-		if(route = $(element).attr("data-wpgmza-rest-api-route"))
-		{
-			url = WPGMZA.resturl + route;
-			
-			options.deferLoading = true;
-			
-			options.ajax = {
-				cache: !this.preventCaching,
-				url: url, 
-				method: method,	
-				data: function(data, settings) {
-					
-					data = self.onAJAXRequest(data, settings);
-					
-					if(useCompressedPathVariable)
-					{
-						// TODO: Test fallback
-						var params;
-						
-						draw = data.draw;
-						delete data.draw;
-						
-						params = "base64" + WPGMZA.restAPI.compressParams(data);
-						compressedURL = url + params + (self.preventCaching ? "?skip_cache=1" : "");
-						
-						// Debugging
-						// compressedURL += "?" + generate_random_string(16000);
-						
-						//if(compressedURL.length < WPGMZA.restAPI.maxURLLength)
-						//{
-							// Attempt compressed request
-							self.dataTable.ajax.url(compressedURL);
-							return {};
-						//}
-						
-						// Fallback, restore URL, draw and POST method
-						if(!WPGMZA.RestAPI.compressedPathVariableURLLimitWarningDisplayed)
-							console.warn("Compressed path variable route would exceed URL length limit");
-						
-						WPGMZA.RestAPI.compressedPathVariableURLLimitWarningDisplayed = true;
-						
-						self.dataTable.ajax.url(url);
-						data.draw = draw;
-						method = "POST";
-					}
-					
-					if(self.preventCaching)
-						self.dataTable.ajax.url(url + "?skip_cache=1");
-					
-					return data;
-					
-				},
-				beforeSend: function(xhr, settings) {
-					
-					// Update request method
-					settings.method = settings.type = method;
-					xhr.setRequestHeader("method", method);
-					
-					// Strip GET when falling back to POST
-					if(method == "POST")
-						settings.url = settings.url.replace(/\?.+/, "");
-					
-					// Rest nonce
-					xhr.setRequestHeader("X-WP-Nonce", WPGMZA.restnonce);
-					
-					// Put draw in header, for compressed requests
-					if(useCompressedPathVariable)
-						xhr.setRequestHeader("X-DataTables-Draw", draw);
-				}/*,
-				error: function(xhr, status, message) {
-					
-					// if(xhr.status == 414)
-					
-				}*/
-			};
-			
-			options.processing = true;
-			options.serverSide = true;
-		}
-		
-		if(WPGMZA.AdvancedTableDataTable && this instanceof WPGMZA.AdvancedTableDataTable && WPGMZA.settings.wpgmza_default_items)
-			options.iDisplayLength = parseInt(WPGMZA.settings.wpgmza_default_items);
-		
-		options.aLengthMenu = [5, 10, 25, 50, 100];
-		
-		var languageURL;
-
-		if(WPGMZA.locale)
-			switch(WPGMZA.locale.substr(0, 2))
-			{
-				case "af":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Afrikaans.json";
-					break;
-
-				case "sq":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Albanian.json";
-					break;
-
-				case "am":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Amharic.json";
-					break;
-
-				case "ar":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Arabic.json";
-					break;
-
-				case "hy":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Armenian.json";
-					break;
-
-				case "az":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Azerbaijan.json";
-					break;
-
-				case "bn":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Bangla.json";
-					break;
-
-				case "eu":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Basque.json";
-					break;
-
-				case "be":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Belarusian.json";
-					break;
-
-				case "bg":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Bulgarian.json";
-					break;
-
-				case "ca":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Catalan.json";
-					break;
-
-				case "zh":
-					if(WPGMZA.locale == "zh_TW")
-						languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Chinese-traditional.json";
-					else
-						languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Chinese.json";
-					break;
-
-				case "hr":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Croatian.json";
-					break;
-
-				case "cs":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Czech.json";
-					break;
-
-				case "da":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json";
-					break;
-
-				case "nl":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Dutch.json";
-					break;
-
-				/*case "en":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json";
-					break;*/
-
-				case "et":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Estonian.json";
-					break;
-
-				case "fi":
-					if(WPGMZA.locale.match(/^fil/))
-						languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Filipino.json";
-					else
-						languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Finnish.json";
-					break;
-
-				case "fr":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/French.json";
-					break;
-
-				case "gl":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Galician.json";
-					break;
-
-				case "ka":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Georgian.json";
-					break;
-
-				case "de":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/German.json";
-					break;
-
-				case "el":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Greek.json";
-					break;
-
-				case "gu":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Gujarati.json";
-					break;
-
-				case "he":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Hebrew.json";
-					break;
-
-				case "hi":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Hindi.json";
-					break;
-
-				case "hu":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Hungarian.json";
-					break;
-
-				case "is":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Icelandic.json";
-					break;
-
-				/*case "id":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Indonesian-Alternative.json";
-					break;*/
-				
-				case "id":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Indonesian.json";
-					break;
-
-				case "ga":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Irish.json";
-					break;
-
-				case "it":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Italian.json";
-					break;
-
-				case "ja":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Japanese.json";
-					break;
-
-				case "kk":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Kazakh.json";
-					break;
-
-				case "ko":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Korean.json";
-					break;
-
-				case "ky":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Kyrgyz.json";
-					break;
-
-				case "lv":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Latvian.json";
-					break;
-
-				case "lt":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Lithuanian.json";
-					break;
-
-				case "mk":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Macedonian.json";
-					break;
-
-				case "ml":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Malay.json";
-					break;
-
-				case "mn":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Mongolian.json";
-					break;
-
-				case "ne":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Nepali.json";
-					break;
-
-				case "nb":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Norwegian-Bokmal.json";
-					break;
-				
-				case "nn":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Norwegian-Nynorsk.json";
-					break;
-				
-				case "ps":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Pashto.json";
-					break;
-
-				case "fa":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Persian.json";
-					break;
-
-				case "pl":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Polish.json";
-					break;
-
-				case "pt":
-					if(WPGMZA.locale == "pt_BR")
-						languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json";
-					else
-						languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese.json";
-					break;
-				
-				case "ro":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Romanian.json";
-					break;
-
-				case "ru":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Russian.json";
-					break;
-
-				case "sr":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Serbian.json";
-					break;
-
-				case "si":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Sinhala.json";
-					break;
-
-				case "sk":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Slovak.json";
-					break;
-
-				case "sl":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Slovenian.json";
-					break;
-
-				case "es":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Spanish.json";
-					break;
-
-				case "sw":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Swahili.json";
-					break;
-
-				case "sv":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Swedish.json";
-					break;
-
-				case "ta":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Tamil.json";
-					break;
-
-				case "te":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/telugu.json";
-					break;
-
-				case "th":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Thai.json";
-					break;
-
-				case "tr":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Turkish.json";
-					break;
-
-				case "uk":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Ukrainian.json";
-					break;
-
-				case "ur":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Urdu.json";
-					break;
-
-				case "uz":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Uzbek.json";
-					break;
-
-				case "vi":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Vietnamese.json";
-					break;
-
-				case "cy":
-					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Welsh.json";
-					break;
-			}
-		
-		if(languageURL)
-			options.language = {
-				"processing": "test",
-				"url": languageURL
-			};
-		
-		return options;
 	}
 	
 	/**
@@ -7277,6 +7029,362 @@ jQuery(function($) {
 			$.extend(params, JSON.parse(attr));
 		
 		return $.extend(data, params);
+	}
+	
+	WPGMZA.DataTable.prototype.onDataTableAjaxRequest = function(data, callback, settings)
+	{
+		var self = this;
+		var element = this.element;
+		var route = $(element).attr("data-wpgmza-rest-api-route");
+		var params = this.onAJAXRequest(data, settings);
+		var draw = params.draw;
+		
+		delete params.draw;
+		
+		if(!route)
+			throw new Error("No data-wpgmza-rest-api-route attribute specified");
+		
+		var options = {
+			method: "POST",
+			useCompressedPathVariable: true,
+			data: params,
+			dataType: "json",
+			cache: !this.preventCaching,
+			beforeSend: function(xhr) {
+				// Put draw in header, for compressed requests
+				xhr.setRequestHeader("X-DataTables-Draw", draw);
+			},
+			success: function(response, status, xhr) {
+				
+				response.draw = draw;
+				self.lastResponse = response;
+				
+				callback(response);
+				
+			}
+		};
+		
+		return WPGMZA.restAPI.call(route, options);
+	}
+	
+	WPGMZA.DataTable.prototype.getDataTableSettings = function()
+	{
+		var self = this;
+		var element = this.element;
+		var options = {};
+		
+		if($(element).attr("data-wpgmza-datatable-options"))
+			options = JSON.parse($(element).attr("data-wpgmza-datatable-options"));
+	
+		options.deferLoading = true;
+		options.processing = true;
+		options.serverSide = true;
+		options.ajax = function(data, callback, settings) { 
+			return WPGMZA.DataTable.prototype.onDataTableAjaxRequest.apply(self, arguments); 
+		}
+		
+		if(WPGMZA.AdvancedTableDataTable && this instanceof WPGMZA.AdvancedTableDataTable && WPGMZA.settings.wpgmza_default_items)
+			options.iDisplayLength = parseInt(WPGMZA.settings.wpgmza_default_items);
+		
+		options.aLengthMenu = [5, 10, 25, 50, 100];
+		
+		var languageURL = this.getLanguageURL();
+		if(languageURL)
+			options.language = {
+				"url": languageURL
+			};
+		
+		return options;
+	}
+	
+	WPGMZA.DataTable.prototype.getLanguageURL = function()
+	{
+		if(!WPGMZA.locale)
+			return null;
+		
+		var languageURL;
+		
+		switch(WPGMZA.locale.substr(0, 2))
+		{
+			case "af":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Afrikaans.json";
+				break;
+
+			case "sq":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Albanian.json";
+				break;
+
+			case "am":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Amharic.json";
+				break;
+
+			case "ar":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Arabic.json";
+				break;
+
+			case "hy":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Armenian.json";
+				break;
+
+			case "az":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Azerbaijan.json";
+				break;
+
+			case "bn":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Bangla.json";
+				break;
+
+			case "eu":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Basque.json";
+				break;
+
+			case "be":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Belarusian.json";
+				break;
+
+			case "bg":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Bulgarian.json";
+				break;
+
+			case "ca":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Catalan.json";
+				break;
+
+			case "zh":
+				if(WPGMZA.locale == "zh_TW")
+					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Chinese-traditional.json";
+				else
+					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Chinese.json";
+				break;
+
+			case "hr":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Croatian.json";
+				break;
+
+			case "cs":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Czech.json";
+				break;
+
+			case "da":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json";
+				break;
+
+			case "nl":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Dutch.json";
+				break;
+
+			/*case "en":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json";
+				break;*/
+
+			case "et":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Estonian.json";
+				break;
+
+			case "fi":
+				if(WPGMZA.locale.match(/^fil/))
+					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Filipino.json";
+				else
+					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Finnish.json";
+				break;
+
+			case "fr":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/French.json";
+				break;
+
+			case "gl":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Galician.json";
+				break;
+
+			case "ka":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Georgian.json";
+				break;
+
+			case "de":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/German.json";
+				break;
+
+			case "el":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Greek.json";
+				break;
+
+			case "gu":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Gujarati.json";
+				break;
+
+			case "he":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Hebrew.json";
+				break;
+
+			case "hi":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Hindi.json";
+				break;
+
+			case "hu":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Hungarian.json";
+				break;
+
+			case "is":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Icelandic.json";
+				break;
+
+			/*case "id":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Indonesian-Alternative.json";
+				break;*/
+			
+			case "id":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Indonesian.json";
+				break;
+
+			case "ga":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Irish.json";
+				break;
+
+			case "it":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Italian.json";
+				break;
+
+			case "ja":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Japanese.json";
+				break;
+
+			case "kk":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Kazakh.json";
+				break;
+
+			case "ko":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Korean.json";
+				break;
+
+			case "ky":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Kyrgyz.json";
+				break;
+
+			case "lv":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Latvian.json";
+				break;
+
+			case "lt":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Lithuanian.json";
+				break;
+
+			case "mk":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Macedonian.json";
+				break;
+
+			case "ml":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Malay.json";
+				break;
+
+			case "mn":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Mongolian.json";
+				break;
+
+			case "ne":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Nepali.json";
+				break;
+
+			case "nb":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Norwegian-Bokmal.json";
+				break;
+			
+			case "nn":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Norwegian-Nynorsk.json";
+				break;
+			
+			case "ps":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Pashto.json";
+				break;
+
+			case "fa":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Persian.json";
+				break;
+
+			case "pl":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Polish.json";
+				break;
+
+			case "pt":
+				if(WPGMZA.locale == "pt_BR")
+					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json";
+				else
+					languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese.json";
+				break;
+			
+			case "ro":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Romanian.json";
+				break;
+
+			case "ru":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Russian.json";
+				break;
+
+			case "sr":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Serbian.json";
+				break;
+
+			case "si":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Sinhala.json";
+				break;
+
+			case "sk":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Slovak.json";
+				break;
+
+			case "sl":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Slovenian.json";
+				break;
+
+			case "es":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Spanish.json";
+				break;
+
+			case "sw":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Swahili.json";
+				break;
+
+			case "sv":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Swedish.json";
+				break;
+
+			case "ta":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Tamil.json";
+				break;
+
+			case "te":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/telugu.json";
+				break;
+
+			case "th":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Thai.json";
+				break;
+
+			case "tr":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Turkish.json";
+				break;
+
+			case "uk":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Ukrainian.json";
+				break;
+
+			case "ur":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Urdu.json";
+				break;
+
+			case "uz":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Uzbek.json";
+				break;
+
+			case "vi":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Vietnamese.json";
+				break;
+
+			case "cy":
+				languageURL = "//cdn.datatables.net/plug-ins/1.10.12/i18n/Welsh.json";
+				break;
+		}
+		
+		return languageURL;
 	}
 	
 	WPGMZA.DataTable.prototype.onAJAXResponse = function(response)
@@ -7326,8 +7434,7 @@ jQuery(function($) {
 		
 		options.createdRow = function(row, data, index)
 		{
-			var ajax = self.dataTable.ajax.json();
-			var meta = ajax.meta[index];
+			var meta = self.lastResponse.meta[index];
 			row.wpgmzaMarkerData = meta;
 		}
 		
@@ -7343,10 +7450,18 @@ jQuery(function($) {
 	{
 		var self = this;
 		var ids = [];
+		var map = WPGMZA.maps[0];
 		
 		$(this.element).find("input[name='mark']:checked").each(function(index, el) {
 			var row = $(el).closest("tr")[0];
 			ids.push(row.wpgmzaMarkerData.id);
+		});
+		
+		ids.forEach(function(marker_id) {
+			var marker = map.getMarkerByID(marker_id);
+			
+			if(marker)
+				map.removeMarker(marker);
 		});
 		
 		WPGMZA.restAPI.call("/markers/?skip_cache=1", {
@@ -7625,6 +7740,9 @@ jQuery(function($) {
 	};
 	
 	$(window).on("load", function(event) {
+		
+		if(WPGMZA.is_admin == 1)
+			return;
 		
 		$(".wpgmza_map").each(function(index, el) {
 			var map_id = parseInt( $(el).attr("id").match(/\d+/)[0] );
@@ -9032,6 +9150,7 @@ jQuery(function($) {
 		}
 		
 		this.trigger("domready");
+		this.trigger("infowindowopen");
 
 		return true;
 	}
@@ -9047,6 +9166,34 @@ jQuery(function($) {
 		$(document.body).on("click", ".wpgmza-close-info-window", function(event) {
 			$(event.target).closest(".wpgmza-info-window").remove();
 		});
+	});
+	
+	$(document.body).on("click", ".wpgmza-infowindow .wpgmza_gd", function(event) {
+		
+		var map = $(event.target).closest("[data-map-id]")[0].wpgmzaMap;
+		
+		var latLng = new WPGMZA.LatLng($(event.target).attr("data-latlng"));
+		var address = $(event.target).attr("data-address");
+		
+		if( !WPGMZA.settings.forceNativeDirections && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) )
+		{
+        
+			if( (navigator.platform.indexOf("iPhone") != -1)
+				|| (navigator.platform.indexOf("iPod") != -1)
+				|| (navigator.platform.indexOf("iPad") != -1))
+				window.open("http://maps.apple.com/maps?daddr="+latLong+"&ll=");
+			else
+				window.open("http://maps.google.com/maps?daddr="+latLong+"&ll=");
+			
+		}
+		else
+		{
+			$("#wpgmaps_directions_edit_" + map.id).show();
+			$("#wpgmaps_directions_editbox_" + map.id).show();
+			$("#wpgmza_input_to_" + map.id).val(address && address.length > 0 ? address : latLng.toString());
+			$("#wpgmza_input_from_" + map.id).focus().select();
+		}
+		
 	});
 	
 });
@@ -9142,6 +9289,7 @@ jQuery(function($) {
 				clearInterval(intervalID);
 				
 				div[0].wpgmzaMapObject = self.mapObject;
+				div.addClass("wpgmza-infowindow");
 				
 				self.element = div[0];
 				self.trigger("infowindowopen");
@@ -9201,7 +9349,7 @@ jQuery(function($) {
 		
 		Parent.call(this, mapObject);
 		
-		this.element = $("<div class='ol-info-window-container ol-info-window-plain'></div>")[0];
+		this.element = $("<div class='wpgmza-infowindow ol-info-window-container ol-info-window-plain'></div>")[0];
 			
 		$(this.element).on("click", ".ol-info-window-close", function(event) {
 			self.close();
@@ -9468,8 +9616,6 @@ jQuery(function($) {
 		
 		WPGMZA.watchPosition(function(position) {
 			
-			self.userLocationMarker = marker;
-			
 			marker.setPosition({
 				lat: position.coords.latitude,
 				lng: position.coords.longitude
@@ -9477,6 +9623,12 @@ jQuery(function($) {
 			
 			if(!marker.map)
 				self.addMarker(marker);
+			
+			if(!self.userLocationMarker)
+			{
+				self.userLocationMarker = marker;
+				self.trigger("userlocationmarkerplaced");
+			}
 			
 		});
 	}
@@ -9616,7 +9768,7 @@ jQuery(function($) {
 		this.loadGoogleMap();
 		
 		if(options)
-			this.setOptions(options);
+			this.setOptions(options, true);
 
 		google.maps.event.addListener(this.googleMap, "click", function(event) {
 			var wpgmzaEvent = new WPGMZA.Event("click");
@@ -9700,9 +9852,15 @@ jQuery(function($) {
 		$(this.engineElement).append($(this.element).find(".wpgmza-loader"));
 	}
 	
-	WPGMZA.GoogleMap.prototype.setOptions = function(options)
+	WPGMZA.GoogleMap.prototype.setOptions = function(options, initializing)
 	{
 		Parent.prototype.setOptions.call(this, options);
+		
+		if(!initializing)
+		{
+			this.googleMap.setOptions(options);
+			return;
+		}
 		
 		var converted = $.extend(options, this.settings.toGoogleMapsOptions());
 		
@@ -10249,6 +10407,9 @@ jQuery(function($) {
 					return;
 				
 				// Left click
+				if($(event.target).closest(".ol-marker").length)
+					return; // A marker was clicked, not the map. Do nothing
+				
 				self.trigger({
 					type: "click",
 					latLng: latLng
@@ -10799,7 +10960,7 @@ jQuery(function($) {
 		if(this == this.map.userLocationMarker)
 			return;
 		
-		if(this.map.settings.store_locator_hide_before_search == 1)
+		if(this.map.settings.store_locator_hide_before_search == 1 && WPGMZA.is_admin != 1)
 		{
 			this.isFiltered = true;
 			this.setVisible(false);
@@ -10845,7 +11006,7 @@ jQuery(function($) {
 		}
 		
 		// NB: Redundant, this is now done on the DB
-		if(this.icon && this.icon.length || (window.google && this.icon instanceof google.maps.MarkerImage))
+		if(this.icon && this.icon.length || (window.google && window.google.maps && this.icon instanceof google.maps.MarkerImage))
 			return stripProtocol(this.icon);
 		
 		/*var categoryIcon = this.getIconFromCategory();
@@ -10962,6 +11123,8 @@ jQuery(function($) {
 			
 		this.googleMarker.setLabel(this.settings.label);
 		
+		if(this.anim)
+			this.googleMarker.setAnimation(this.anim);
 		if(this.animation)
 			this.googleMarker.setAnimation(this.animation);
 			
@@ -11130,7 +11293,16 @@ jQuery(function($) {
 			parseFloat(this.lat)
 		]);
 		
-		this.element = $("<div class='ol-marker'><img src='" + WPGMZA.defaultMarkerIcon + "' alt=''/></div>")[0];
+		var img = $("<img alt=''/>")[0];
+		img.onload = function(event) {
+			if(self.map)
+				self.map.olMap.updateSize();
+		}
+		img.src = WPGMZA.defaultMarkerIcon;
+		
+		this.element = $("<div class='ol-marker'></div>")[0];
+		this.element.append(img);
+		
 		this.element.wpgmzaMarker = this;
 		
 		$(this.element).on("mouseover", function(event) {
@@ -11794,24 +11966,40 @@ jQuery(function($) {
 		"get": function() {
 			var dropdown, checkboxes, value, results;
 			
-			if((dropdown = $(this.element).find(".wpgmza_sl_category_div > select")).length)
-			{
-				value = dropdown.val();
-				
-				if(value == "0")
-					return null;
-				
-				return [value];
-			}
+			var isModernStyle = $(this.map.element).find(".wpgmza-modern-store-locator").length > 0;
 			
-			$(this.element).find(".wpgmza_sl_category_div :checked").each(function(index, el) {
+			if(isModernStyle)
+			{
+				$(this.map.element).find(".wpgmza-modern-store-locator [name='wpgmza_cat_checkbox']:checked").each(function(index, el) {
+					
+					if(!results)
+						results = [];
+					
+					results.push( $(el).val() );
+					
+				});
+			}
+			else
+			{
+				if((dropdown = $(this.element).find(".wpgmza_sl_category_div > select")).length)
+				{
+					value = dropdown.val();
+					
+					if(value == "0")
+						return null;
+					
+					return [value];
+				}
 				
-				if(!results)
-					results = [];
-				
-				results.push( $(el).val() );
-				
-			});
+				$(this.element).find(".wpgmza_sl_category_div :checked").each(function(index, el) {
+					
+					if(!results)
+						results = [];
+					
+					results.push( $(el).val() );
+					
+				});
+			}
 			
 			return results;
 		}
@@ -11887,7 +12075,7 @@ jQuery(function($) {
 			if(this._circle)
 				return this._circle;
 			
-			if(this.map.settings.wpgmza_store_locator_radius_style == "modern")
+			if(!WPGMZA.isDeviceiOS() && this.map.settings.wpgmza_store_locator_radius_style == "modern")
 			{
 				this._circle = WPGMZA.ModernStoreLocatorCircle.createInstance(this.map.id);
 				this._circle.settings.color = this.circleStrokeColor;
@@ -12890,12 +13078,15 @@ jQuery(function($) {
 			
 			var ths = $(self.element).find("thead th");
 			
-			if(!settings.json || settings.json.data.length == 0)
-				return;	// Not ready yet
+			if(!self.lastResponse || !self.lastResponse.meta)
+				return; // Not ready yet
+			
+			if(self.lastResponse.meta.length == 0)
+				return; // No results
 			
 			$(self.element).find("tbody>tr").each(function(index, tr) {
 				
-				var meta = settings.json.meta[index];
+				var meta = self.lastResponse.meta[index];
 				
 				$(tr).addClass("wpgmaps_mlist_row");
 				$(tr).attr("mid", meta.id);
@@ -12974,14 +13165,14 @@ jQuery(function($) {
 			for(var key in options)
 				this[key] = options[key];
 		
-		this.categoryDropdown = $("select[name='wpgmza_filter_select'][mid='" + this.map.id + "']")
+		this.categoryDropdown = $(".wpgmza-marker-listing-category-filter[data-map-id='" + this.map.id + "'] select");
 		if(!$(this.categoryDropdown).closest(".wpgmza-store-locator").length)
 			this.categoryDropdown.on("change", function(event) {
 				var map = WPGMZA.getMapByID(self.map.id);
 				map.markerFilter.update();
 			});
 		
-		this.categoryCheckboxes = $(".wpgmza_checkbox[mid='" + this.map.id + "']");
+		this.categoryCheckboxes = $(".wpgmza-marker-listing-category-filter[data-map-id='" + this.map.id + "'] input[type='checkbox']");
 		this.categoryCheckboxes.on("change", function(event) {
 			var map = WPGMZA.getMapByID(self.map.id);
 			map.markerFilter.update();
@@ -13198,6 +13389,8 @@ jQuery(function($) {
 		
 		// We use POST as the requests can become quite large with marker IDs, don't want to hit the GET limit
 		params.method = "POST";
+		params.useCompressedPathVariable = true;
+		params.cache = true;
 		
 		// Parse parameters passed from the server
 		var str = $(this.element).attr("data-wpgmza-ajax-parameters");
@@ -13247,7 +13440,7 @@ jQuery(function($) {
 	{
 		$(this.element).html(html);
 		
-		// this.trigger("markerlistingupdated");
+		this.trigger("markerlistingupdated");
 	}
 	
 	WPGMZA.MarkerListing.prototype.reload = function()
@@ -13850,6 +14043,9 @@ jQuery(function($) {
 	WPGMZA.OLProMarker.prototype.updateIcon = function()
 	{
 		var icon = this.getIcon();
+		
+		if(!icon)
+			return;
 		
 		if(typeof icon == "object" && "url" in icon)
 			icon = icon.url;

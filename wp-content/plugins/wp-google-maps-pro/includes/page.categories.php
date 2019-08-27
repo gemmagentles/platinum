@@ -25,7 +25,7 @@ function wpgmaps_menu_category_layout() {
         echo "</div>";
         echo"<br /><div style='float:right;'><a href='http://www.wpgmaps.com/documentation/troubleshooting/' title='WP Google Maps Troubleshooting Section'>".__("Problems with the plugin? See the troubleshooting manual.","wp-google-maps")."</a></div>";
     } else {
-
+		
         if ($_GET['action'] == "trash" && isset($_GET['cat_id'])) {
             if (isset($_GET['s']) && $_GET['s'] == "1") {
                 if (wpgmaps_trash_cat($_GET['cat_id'])) {
@@ -40,6 +40,8 @@ function wpgmaps_menu_category_layout() {
 
         }
         
+		
+		
         if ($_GET['action'] == "new") {
             wpgmza_pro_category_new_layout();
         }
@@ -69,7 +71,17 @@ function wpgmaps_admin_category_scripts() {
         wp_enqueue_script('thickbox');
         wp_register_script('my-wpgmaps-upload', WP_PLUGIN_URL.'/'.plugin_basename(dirname(__FILE__)).'/js/admin_category.js', array('jquery','media-upload','thickbox'));
         wp_enqueue_script('my-wpgmaps-upload');
+		
+		
     }
+
+	wp_localize_script(
+		'my-wpgmaps-upload',
+		'wpgmza_legacy_map_edit_page_vars',
+		array(
+			'ajax_nonce' => wp_create_nonce('wpgmza')
+		)
+	);
 
 }
 function wpgmaps_admin_category_styles() {
@@ -94,6 +106,9 @@ function wpgmza_pro_category_new_layout() {
     echo "  <div class='wide'>";
     echo "      <h2>".__("Add a Marker Category","wp-google-maps")."</h2>";
     echo "      <form action='admin.php?page=wp-google-maps-menu-categories' method='post' id='wpgmaps_add_marker_category' name='wpgmaps_add_marker_category_form'>";
+	
+	echo "<input name='real_post_nonce' value='" . wp_create_nonce('wpgmza') . "' type='hidden'/>";
+	
     echo "      <table class='wpgmza-listing-comp'>";
     echo "          <tr>";
     echo "              <td><strong>".__("Category Name","wp-google-maps")."</strong>:</td>";
@@ -215,7 +230,7 @@ function wpgmza_pro_category_edit_layout($cat_id) {
 
     global $wpdb;
     global $wpgmza_tblname_categories;
-    
+	
 	$markerLibraryDialog = new WPGMZA\MarkerLibraryDialog();
 	$markerLibraryDialog->html();
 	
@@ -257,6 +272,8 @@ function wpgmza_pro_category_edit_layout($cat_id) {
     echo "  <div class='wide'>";
     echo "      <h2>".__("Edit a Marker Category","wp-google-maps")."</h2>";
     echo "      <form action='admin.php?page=wp-google-maps-menu-categories' method='post' id='wpgmaps_add_marker_category' name='wpgmaps_edit_marker_category_form'>";
+
+	echo "<input name='real_post_nonce' value='" . wp_create_nonce('wpgmza') . "' type='hidden'/>";
 
     echo "      <table class='wpgmza-listing-comp'>";
     echo "          <tr>";
@@ -422,6 +439,15 @@ function wpgmaps_category_head() {
 		$wpdb->query("ALTER TABLE $wpgmza_tblname_categories ADD COLUMN priority INT(11) NOT NULL DEFAULT 0");
 	
     if (isset($_GET['page']) && $_GET['page'] == "wp-google-maps-menu-categories" && isset($_POST['wpgmza_save_marker_category'])) {
+		
+		check_ajax_referer( 'wpgmza', 'real_post_nonce' );
+		
+		if(!current_user_can('administrator'))
+		{
+			http_response_code(401);
+			exit;
+		}
+		
         if (isset($_POST['wpgmza_save_marker_category'])){
             
             
@@ -499,6 +525,14 @@ function wpgmaps_category_head() {
     }
     if (isset($_GET['page']) && $_GET['page'] == "wp-google-maps-menu-categories" && isset($_POST['wpgmza_edit_marker_category'])) {
         
+		check_ajax_referer( 'wpgmza', 'real_post_nonce' );
+		
+		if(!current_user_can('administrator'))
+		{
+			http_response_code(401);
+			exit;
+		}
+		
             global $wpdb;
             global $wpgmza_tblname_categories;
             global $wpgmza_tblname_category_maps;

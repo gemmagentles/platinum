@@ -2,6 +2,9 @@
 
 namespace WPGMZA;
 
+if(!defined('ABSPATH'))
+	return;
+
 /**
  * This class facilitates all communication between the client and any server side modules which can be interacted with through the WordPress REST API.
  */
@@ -13,18 +16,33 @@ class RestAPI extends Factory
 	const NS = 'wpgmza/v1';
 	const CUSTOM_BASE64_REGEX = '/base64[A-Za-z0-9+\-]+(={0,3})?(\/[A-Za-z0-9+\-]+(={0,3})?)?/';
 	
+	private $fallbackRoutesByRegex;
+	private $nonceTable;
+	
 	/**
 	 * Constructor
 	 */
 	public function __construct()
 	{
-		add_action('wp_enqueue_scripts', array($this, 'onEnqueueScripts'));
-		add_action('admin_enqueue_scripts', array($this, 'onEnqueueScripts'));
-		add_action('enqueue_block_assets', array($this, 'onEnqueueScripts'));
+		$this->fallbackRoutesByRegex = array();
+		$this->nonceTable = array();
 		
+		// REST API init
 		add_action('rest_api_init', array($this, 'onRestAPIInit'));
 		
+		add_action('parse_request', array($this, 'onParseRequest'));
+		add_action('init', array($this, 'onInit'));
+		
+		// WP REST Cache integration
 		add_filter('wp_rest_cache/allowed_endpoints', array($this, 'onWPRestCacheAllowedEndpoints'));
+		
+		// AJAX callbacks for when REST API is blocked
+		add_action('wp_ajax_wpgmza_report_rest_api_blocked', array($this, 'onReportRestAPIBlocked'));
+		add_action('wp_ajax_nopriv_wpgmza_report_rest_api_blocked', array($this, 'onReportRestAPIBlocked'));
+		
+		// AJAX fallback for when REST API is blocked
+		add_action('wp_ajax_wpgmza_rest_api_request', array($this, 'onAJAXRequest'));
+		add_action('wp_ajax_nopriv_wpgmza_rest_api_request', array($this, 'onAJAXRequest'));
 	}
 	
 	public static function isCompressedPathVariableSupported()
@@ -37,23 +55,93 @@ class RestAPI extends Factory
 		return preg_match(RestAPI::CUSTOM_BASE64_REGEX, $_SERVER['REQUEST_URI']);
 	}
 	
-	protected function registerRoute($route, $args)
+	protected function addRestNonce($route)
 	{
-		register_rest_route(RestAPI::NS, $route, $args);
+		$this->nonceTable[$route] = wp_create_nonce('wpgmza_' . $route);
+	}
+	
+	public function getNonceTable()
+	{
+		return $this->nonceTable;
+	}
+	
+	protected function checkActionNonce($route)
+	{
+		$route = preg_replace('#^/wpgmza/v1#', '', $route);
+		$nonce = $_SERVER['HTTP_X_WPGMZA_ACTION_NONCE'];
 		
-		if(isset($args['useCompressedPathVariable']) && $args['useCompressedPathVariable'])
+		$result = wp_verify_nonce($nonce, 'wpgmza_' . $route);
+		
+		return $result !== false;
+	}
+	
+	public function registerRoute($route, $args)
+	{
+		$methodIsOnlyGET = true;
+		
+		if(!empty($args['methods']))
 		{
-			$compressedRoute	= preg_replace('#/$#', '', $route) . RestAPI::CUSTOM_BASE64_REGEX;
-			$callback			= $args['callback'];
+			$methods = $args['methods'];
 			
-			$args['callback'] = function($request) use ($callback) {
-				
-				return $callback($request);
-				
-			};
-			
-			register_rest_route(RestAPI::NS, $compressedRoute, $args);
+			if(is_string($methods))
+				$methodIsOnlyGET = $methods == 'GET';
+			else if(is_array($methods))
+			{
+				foreach($methods as $method)
+				{
+					if($method == 'GET')
+						continue;
+					
+					$methodIsOnlyGET = false;
+					break;
+				}
+			}
 		}
+		
+		if(!defined('REST_REQUEST'))
+		{
+			if($methodIsOnlyGET)
+				return;	// No need to add nonces for GET requests to the nonce table
+			
+			$this->addRestNonce($route);
+			
+			if(!wp_doing_ajax())
+				return;
+		}
+		
+		$callback = $args['callback'];
+		
+		$args['callback'] = function($request) use ($route, $callback, $methodIsOnlyGET)
+		{
+			global $wpgmza;
+			
+			$doActionNonceCheck = 
+				empty($args['skipNonceCheck']) &&
+				!$methodIsOnlyGET && 
+				(
+					!$wpgmza->isProVersion() 
+					||
+					version_compare($wpgmza->getProVersion(), '7.11.47', '>=')
+				);
+			
+			if($doActionNonceCheck && !$this->checkActionNonce($route))
+				return new \WP_Error('wpgmza_action_not_allowed', 'You do not have permission to perform this action', array('status' => 403));
+			
+			return $callback($request);
+		};
+		
+		if(defined('REST_REQUEST'))
+		{
+			register_rest_route(RestAPI::NS, $route, $args);
+			
+			if(isset($args['useCompressedPathVariable']) && $args['useCompressedPathVariable'])
+			{
+				$compressedRoute = preg_replace('#/$#', '', $route) . RestAPI::CUSTOM_BASE64_REGEX;
+				register_rest_route(RestAPI::NS, $compressedRoute, $args);
+			}
+		}
+		
+		$this->fallbackRoutesByRegex["#$route#"] = $args;
 	}
 	
 	protected function parseCompressedParameters($param)
@@ -107,7 +195,7 @@ class RestAPI extends Factory
 	 * or from the $_REQUEST array when no compressed string is present
 	 * @return array The request parameters
 	 */
-	protected function getRequestParameters()
+	public function getRequestParameters()
 	{
 		switch($_SERVER['REQUEST_METHOD'])
 		{
@@ -147,23 +235,11 @@ class RestAPI extends Factory
 		}
 	}
 	
-	/**
-	 * Enqueues the wp-api script, required to use the Rest API client side.
-	 * @return void
-	 */
-	public function onEnqueueScripts()
+	protected function registerRoutes()
 	{
-		// NB: I don't think we need to enqueue the entire API seeing as though we use pure jQuery to make REST calls
-		// wp_enqueue_script('wp-api');
-	}
-	
-	/**
-	 * Callback for the rest_api_init action, this function registers the plugins REST API routes.
-	 * @return void
-	 */
-	public function onRestAPIInit()
-	{
-		register_rest_route(RestAPI::NS, '/maps(\/\d+)?/', array(
+		global $wpgmza;
+		
+		$this->registerRoute('/maps(\/\d+)?/', array(
 			'methods'					=> 'GET',
 			'callback'					=> array($this, 'maps')
 		));
@@ -179,12 +255,10 @@ class RestAPI extends Factory
 			'useCompressedPathVariable'	=> true
 		));
 
-		register_rest_route(RestAPI::NS, '/markers(\/\d+)?/', array(
-			'methods'				=> array('DELETE'),
-			'callback'				=> array($this, 'markers'),
-			'permission_callback'	=> function() {
-				return current_user_can('administrator');
-			}
+		$this->registerRoute('/markers(\/\d+)?/', array(
+			'methods'					=> array('DELETE'),
+			'callback'					=> array($this, 'markers'),
+			'permission_callback'		=> array($wpgmza, 'isUserAllowedToEdit')
 		));
 		
 		$this->registerRoute('/datatables', array(
@@ -209,6 +283,113 @@ class RestAPI extends Factory
 			'callback'					=> array($this, 'decompress'),
 			'useCompressedPathVariable'	=> true
 		));
+		
+		do_action('wpgmza_register_rest_api_routes');
+	}
+	
+	/**
+	 * Callback for the rest_api_init action, this function registers the plugins REST API routes.
+	 * @return void
+	 */
+	public function onRestAPIInit()
+	{
+		// NB: Permalink Manager Lite compatibility. This fix prevents the plugin from causing POST REST requests being redirected to GET
+		// NB: We also check the plugin is active to mitigate any potential effects to other plugins. This could be removed, as an optimization
+		global $wp_query;
+		
+		$active_plugins = get_option('active_plugins');
+		if(!empty($wp_query->query_vars) && array_search('permalink-manager/permalink-manager.php', $active_plugins))
+			$wp_query->query_vars['do_not_redirect'] = 1;
+		
+		$this->registerRoutes();
+	}
+	
+	public function onParseRequest()
+	{
+		// Register routes for the nonce table
+		if(!defined('REST_REQUEST'))
+			$this->registerRoutes();
+	}
+	
+	public function onInit()
+	{
+		$this->registerRoutes();
+	}
+	
+	protected function sendAJAXResponse($result, $code=200)
+	{
+		if($code != 200)
+			http_response_code($code);
+		
+		header('Content-type: application/json');
+		
+		echo json_encode($result);
+	}
+	
+	public function onAJAXRequest()
+	{
+		$this->onRestAPIInit();
+		
+		// Check route is specified
+		if(empty($_REQUEST['route']))
+		{
+			$this->sendAJAXResponse(array(
+				'code'			=> 'rest_no_route',
+				'message'		=> 'No route was found matching the URL request method',
+				'data'			=> array(
+					'status'	=> 404
+				)
+			), 404);
+			return;
+		}
+		
+		// Try to match the route
+		$args = null;
+		
+		foreach($this->fallbackRoutesByRegex as $regex => $value)
+		{
+			if(preg_match($regex, $_REQUEST['route']))
+			{
+				$args = $value;
+				break;
+			}
+		}
+		
+		if(!$args)
+		{
+			$this->sendAJAXResponse(array(
+				'code'			=> 'rest_no_route',
+				'message'		=> 'No route was found matching the URL request method',
+				'data'			=> array(
+					'status'	=> 404
+				)
+			), 404);
+			exit;
+		}
+		
+		// Check permissions
+		if(!empty($args['permission_callback']))
+		{
+			$allowed = $args['permission_callback']();
+
+			if(!$allowed)
+			{
+				$this->sendAJAXResponse(array(
+					'code'			=> 'rest_forbidden',
+					'message'		=> 'You are not authorized to use this method',
+					'data'			=> array(
+						'status'	=> 403
+					)
+				), 403);
+				exit;
+			}
+		}
+		
+		// Fire callback
+		$result = $args['callback'](null);
+		$this->sendAJAXResponse($result);
+		
+		exit;
 	}
 	
 	public function onWPRestCacheAllowedEndpoints($allowed_endpoints)
@@ -234,7 +415,7 @@ class RestAPI extends Factory
 		global $wpdb;
 		global $WPGMZA_TABLE_NAME_MAPS;
 		
-		$route = $request->get_route();
+		$route = $_SERVER['REQUEST_URI'];
 		
 		switch($_SERVER['REQUEST_METHOD'])
 		{
@@ -291,7 +472,7 @@ class RestAPI extends Factory
 		global $wpdb;
 		global $wpgmza_tblname;
 		
-		$route		= $request->get_route();
+		$route 		= $_SERVER['REQUEST_URI'];
 		$params		= $this->getRequestParameters();
 		
 		switch($_SERVER['REQUEST_METHOD'])
@@ -399,7 +580,7 @@ class RestAPI extends Factory
 			
 		}catch(Exception $e) {
 			
-			return WP_Error('wpgmza_invalid_datatable_class', 'Invalid class specified', array('status' => 403));
+			return new \WP_Error('wpgmza_invalid_datatable_class', 'Invalid class specified', array('status' => 403));
 			
 		}
 		
@@ -430,7 +611,7 @@ class RestAPI extends Factory
 			$instance = $class::createInstance();
 		
 		if(!($instance instanceof DataTable))
-			return WP_Error('wpgmza_invalid_datatable_class', 'Specified PHP class must extend WPGMZA\\DataTable', array('status' => 403));
+			return new \WP_Error('wpgmza_invalid_datatable_class', 'Specified PHP class must extend WPGMZA\\DataTable', array('status' => 403));
 		
 		$result = $instance->data($request);
 		
@@ -455,5 +636,12 @@ class RestAPI extends Factory
 		$params = $this->getRequestParameters();
 		
 		return $params;
+	}
+	
+	public function onReportRestAPIBlocked()
+	{
+		$now = new \DateTime();
+		
+		update_option('wpgmza_last_rest_api_blocked', $now->format(\DateTime::ISO8601));
 	}
 }

@@ -76,16 +76,17 @@ a[href^=tel]{ color:$font-color; text-decoration:none;}
   }
 }
 
-p {
+p,
+ul li {
   font-size: em(16);
   line-height: 28px;
   letter-spacing: 0.55px;
   font-family: $secondary-font-family;
 
-  @include breakpoint(smalldesktop) {
-    font-size: em(18);
-    line-height: 32px;
-  }
+  // @include breakpoint(smalldesktop) {
+  //   font-size: em(18);
+  //   line-height: 32px;
+  // }
 }
 
 // Listen to tab events to enable outlines (accessibility improvement) there is js to detect this too to add it in for tab users in the app.js file.

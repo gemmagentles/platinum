@@ -27,6 +27,9 @@ class ProPlugin extends Plugin
 		
 		$categoryTree = new CategoryTree();
 		
+		if(empty($data['ajaxnonce']))
+			$data['ajaxnonce'] = wp_create_nonce('wpgmza_ajaxnonce');
+		
 		return array_merge($data, array(
 			'categoryTreeData'		=> $categoryTree,
 			'defaultPreloaderImage'	=> plugin_dir_url(__DIR__) . 'images/AjaxLoader.gif',
