@@ -1,14 +1,14 @@
 {
-  "name": "domar",
-  "version": "1.6.0",
-  "description": "domar wordpress theme package",
+  "name": "platinum",
+  "version": "1.7.0",
+  "description": "Platinum wordpress theme package",
   "main": "index.js",
   "scripts": {
     "build": "webpack --mode development",
     "dist": "webpack --mode production",
     "watch": "webpack --watch --mode development"
   },
-  "author": "Luka Omrčen (%lukaomi)",
+  "author": "Gemma Gentles",
   "license": "ISC",
   "devDependencies": {
     "babel-core": "^6.26.3",

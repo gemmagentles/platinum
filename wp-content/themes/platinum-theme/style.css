@@ -581,7 +581,7 @@ body:not(.page-template-frontpage) .header {
         display: flex;
         justify-content: left;
         width: 30%; } }
-    @media (min-width: 70em) {
+    @media (min-width: 87em) {
       .footer__container--left {
         width: 50%; } }
   .footer__container--right {
@@ -590,8 +590,9 @@ body:not(.page-template-frontpage) .header {
       .footer__container--right {
         display: flex;
         justify-content: space-between;
-        width: 70%; } }
-    @media (min-width: 70em) {
+        width: 70%;
+        padding-top: 68px; } }
+    @media (min-width: 87em) {
       .footer__container--right {
         width: 50%; } }
 
@@ -613,6 +614,10 @@ body:not(.page-template-frontpage) .header {
 
 .footer__contact {
   color: white; }
+  @media (min-width: 64em) {
+    .footer__contact {
+      max-width: 260px;
+      padding-right: 40px; } }
   .footer__contact--phone {
     font-size: 0.875em;
     letter-spacing: 1.01px;
@@ -633,12 +638,16 @@ body:not(.page-template-frontpage) .header {
         height: 1px;
         background-color: white;
         width: 100%; } }
+  .footer__contact--address {
+    font-size: 0.875em;
+    letter-spacing: 1.01px;
+    padding: 10px 0; }
 
 .footer__nav {
   padding: 40px 0; }
   @media (min-width: 64em) {
     .footer__nav {
-      padding: 0; } }
+      padding: 0 40px 0 0; } }
   .footer__nav ul {
     list-style-type: none;
     padding-top: 5px; }
@@ -868,17 +877,20 @@ body:not(.page-template-frontpage) .header {
 
 .content-overlay-panel__image-wrapper {
   padding: 0 40px; }
-  @media (min-width: 64em) {
-    .content-overlay-panel__image-wrapper {
-      padding: 0 0 0 122px; } }
   @media (min-width: 87em) {
     .content-overlay-panel__image-wrapper {
       display: flex;
       justify-content: flex-end; } }
 
+@media (min-width: 64em) {
+  .content-overlay-panel__image-with-text {
+    padding: 0 0 0 122px; } }
+
+.content-overlay-panel__image-with-text .content-overlay-panel__image {
+  max-width: 1281px; }
+
 .content-overlay-panel__image {
   width: 100%;
-  max-width: 1281px;
   display: block; }
 
 .tiles__wrapper {
@@ -1457,15 +1469,12 @@ a[href^=tel] {
           width: 70px;
           opacity: 1; } } }
 
-p {
+p,
+ul li {
   font-size: 1em;
   line-height: 28px;
   letter-spacing: 0.55px;
   font-family: Akzidenz-Grotesk BQ; }
-  @media (min-width: 64em) {
-    p {
-      font-size: 1.125em;
-      line-height: 32px; } }
 
 body:not(.user-is-tabbing) button:focus,
 body:not(.user-is-tabbing) input:focus,
@@ -1569,3 +1578,4 @@ BUTTON
   background-color: white;
   border: none;
   cursor: pointer; }
+
