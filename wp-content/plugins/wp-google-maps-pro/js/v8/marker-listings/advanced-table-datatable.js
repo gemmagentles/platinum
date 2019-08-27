@@ -43,12 +43,15 @@ jQuery(function($) {
 			
 			var ths = $(self.element).find("thead th");
 			
-			if(!settings.json || settings.json.data.length == 0)
-				return;	// Not ready yet
+			if(!self.lastResponse || !self.lastResponse.meta)
+				return; // Not ready yet
+			
+			if(self.lastResponse.meta.length == 0)
+				return; // No results
 			
 			$(self.element).find("tbody>tr").each(function(index, tr) {
 				
-				var meta = settings.json.meta[index];
+				var meta = self.lastResponse.meta[index];
 				
 				$(tr).addClass("wpgmaps_mlist_row");
 				$(tr).attr("mid", meta.id);

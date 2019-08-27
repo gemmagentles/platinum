@@ -338,6 +338,7 @@ function searchLocations(map_id) {
 		{
 			// Coordinates entered, no need to geocode
 			var point = new WPGMZA.LatLng(parseFloat(wpgm_lat),parseFloat(wpgm_lng));
+			point.latLng = point;
 			
 			MYMAP[map_id].map.trigger({
 				type: 		"storelocatorgeocodecomplete",
@@ -1695,7 +1696,7 @@ function wpgmza_reset_directions(wpgmzamid) {
 
 jQuery("body").on("click", ".wpgmza_gd", function() {
 
-    var wpgmzamid = jQuery(this).attr("id");
+    var wpgmzamid = jQuery(this).closest("[mapid]").attr("mapid");
     var end = jQuery(this).attr("wpgm_addr_field");
     var latLong = jQuery(this).attr("gps");
     /* pelicanpaul updates for mobile */

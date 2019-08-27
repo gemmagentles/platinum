@@ -17,6 +17,9 @@ jQuery(function($) {
 	{
 		var icon = this.getIcon();
 		
+		if(!icon)
+			return;
+		
 		if(typeof icon == "object" && "url" in icon)
 			icon = icon.url;
 		else if(typeof icon != "string")

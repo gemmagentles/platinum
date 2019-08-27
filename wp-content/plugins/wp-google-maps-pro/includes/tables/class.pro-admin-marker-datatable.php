@@ -64,6 +64,8 @@ class ProAdminMarkerDataTable extends AdminMarkerDataTable
 		// Temporary workaround for map ID not passed through datatables endpoint
 		if(isset($_REQUEST['wpgmzaDataTableRequestData']))
 			$map_id = (int)$_REQUEST['wpgmzaDataTableRequestData']['map_id'];
+		else
+			$map_id = (int)$_REQUEST['map_id'];
 		
 		foreach($columns as $key => $value)
 		{

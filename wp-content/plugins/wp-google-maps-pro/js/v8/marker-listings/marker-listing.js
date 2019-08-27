@@ -21,14 +21,14 @@ jQuery(function($) {
 			for(var key in options)
 				this[key] = options[key];
 		
-		this.categoryDropdown = $("select[name='wpgmza_filter_select'][mid='" + this.map.id + "']")
+		this.categoryDropdown = $(".wpgmza-marker-listing-category-filter[data-map-id='" + this.map.id + "'] select");
 		if(!$(this.categoryDropdown).closest(".wpgmza-store-locator").length)
 			this.categoryDropdown.on("change", function(event) {
 				var map = WPGMZA.getMapByID(self.map.id);
 				map.markerFilter.update();
 			});
 		
-		this.categoryCheckboxes = $(".wpgmza_checkbox[mid='" + this.map.id + "']");
+		this.categoryCheckboxes = $(".wpgmza-marker-listing-category-filter[data-map-id='" + this.map.id + "'] input[type='checkbox']");
 		this.categoryCheckboxes.on("change", function(event) {
 			var map = WPGMZA.getMapByID(self.map.id);
 			map.markerFilter.update();
@@ -245,6 +245,8 @@ jQuery(function($) {
 		
 		// We use POST as the requests can become quite large with marker IDs, don't want to hit the GET limit
 		params.method = "POST";
+		params.useCompressedPathVariable = true;
+		params.cache = true;
 		
 		// Parse parameters passed from the server
 		var str = $(this.element).attr("data-wpgmza-ajax-parameters");
@@ -294,7 +296,7 @@ jQuery(function($) {
 	{
 		$(this.element).html(html);
 		
-		// this.trigger("markerlistingupdated");
+		this.trigger("markerlistingupdated");
 	}
 	
 	WPGMZA.MarkerListing.prototype.reload = function()

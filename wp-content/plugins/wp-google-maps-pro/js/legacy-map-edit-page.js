@@ -51,9 +51,43 @@
 		});
 	}
 	
+	function wpgmza_native_map_type_to_google_map_type(nativeMapType)
+	{
+		var mapTypeId;
+		
+		switch(nativeMapType)
+		{
+			case "2":
+				mapTypeId = google.maps.MapTypeId.SATELLITE;
+				break;
+			
+			case "3":
+				mapTypeId = google.maps.MapTypeId.HYBRID;
+				break;
+			
+			case "4":
+				mapTypeId = google.maps.MapTypeId.TERRAIN;
+				break;
+			
+			default:
+				mapTypeId = google.maps.MapTypeId.ROADMAP;
+				break;
+		}
+		
+		return mapTypeId;
+	}
+	
     jQuery(function() {
     	var placeSearch, autocomplete, wpgmza_def_i;
 
+		if(!WPGMZA.settings.engine || WPGMZA.settings.engine == "google-maps")
+		jQuery("#wpgmza_map_type").on("change", function(event) {
+			
+			WPGMZA.maps[0].setOptions({
+				mapTypeId: wpgmza_native_map_type_to_google_map_type(this.value)
+			});
+			
+		});
         
         function fillInAddress() {
           // Get the place details from the autocomplete object.
@@ -344,8 +378,8 @@
 								
 								jQuery("#wpgmza_add_retina").prop('checked', result.retina == "1");
 
-								var categories = result.category.split(",");
 								jQuery('input[name=wpgmza_cat_checkbox]').removeAttr('checked');
+								var categories = result.category.split(",");
 								for(var i = 0; i < categories.length; i++)
 								{
 									var category_id = categories[i];
@@ -979,6 +1013,9 @@
 			this.map = WPGMZA.Map.createInstance(element, myOptions);
             this.bounds = new WPGMZA.LatLngBounds();
 			
+			if(!WPGMZA.settings.engine || WPGMZA.settings.engine == "google-maps")
+				this.map.setOptions({mapTypeId: wpgmza_native_map_type_to_google_map_type(jQuery("#wpgmza_map_type").val())});
+			
 			var theme_data = wpgmza_legacy_map_edit_page_vars.theme_data;
 			if(theme_data && theme_data.length)
 			{
@@ -1107,10 +1144,10 @@
 				var zoom = MYMAP.map.getZoom();
 				var $ = jQuery;
 				
-				$("#wpgmza_start_location").val(center.lat + "," + center.lng);
-				$("#wpgmza_start_zoom").val(zoom);
+				jQuery("#wpgmza_start_location").val(center.lat + "," + center.lng);
+				jQuery("#wpgmza_start_zoom").val(zoom);
 				
-				$("#wpgmaps_save_reminder").show();
+				jQuery("#wpgmaps_save_reminder").show();
 				
 			});
 			

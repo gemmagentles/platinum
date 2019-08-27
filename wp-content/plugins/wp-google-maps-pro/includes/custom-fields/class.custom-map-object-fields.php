@@ -70,6 +70,7 @@ class CustomMapObjectFields implements \IteratorAggregate, \JsonSerializable, \C
 			WHERE `object_id`=%d
 			AND LENGTH(value)
 			";
+			
 		$params = array($object_id);
 		$stmt = $wpdb->prepare($qstr, $params);
 		

@@ -14,7 +14,7 @@
 class WPGMapsImportExport{
 
 	public function __construct(){
-
+		
 	}
 
 	public function export_map( $mapid = false ){
@@ -28,7 +28,7 @@ class WPGMapsImportExport{
 			global $wpdb;
 
 	    	$query = "SELECT * FROM `{$wpdb->prefix}wpgmza_maps` WHERE `id` = '$mapid'";
-
+			
 	        $results = $wpdb->get_row( $query, ARRAY_A );
 
 	        $map_data = array();

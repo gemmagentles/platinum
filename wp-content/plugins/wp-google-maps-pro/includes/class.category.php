@@ -28,7 +28,7 @@ class Category
 				category_id int(11) NOT NULL,
 				PRIMARY KEY  (marker_id, category_id)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-		");		
+		");
 	}
 	
 	/**
@@ -93,7 +93,7 @@ class Category
 				if(array_search($category_id, $categories) === false)
 					continue;
 				
-				$qstr = "INSERT INTO $WPGMZA_TABLE_NAME_MARKERS_HAS_CATEGORIES (marker_id, category_id) VALUES (%d, %d)";
+				$qstr = "INSERT INTO $WPGMZA_TABLE_NAME_MARKERS_HAS_CATEGORIES (marker_id, category_id) VALUES (%d, %d) ON DUPLICATE KEY UPDATE marker_id=marker_id";
 				
 				$stmt = $wpdb->prepare($qstr, array($marker->id, $category_id));
 				
