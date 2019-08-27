@@ -34,6 +34,7 @@ class CategoryTree extends CategoryTreeNode
 				)
 			) AS marker_count 
 			FROM $WPGMZA_TABLE_NAME_CATEGORIES
+			WHERE active=0
 			ORDER BY priority";
 		
 		$params = array();

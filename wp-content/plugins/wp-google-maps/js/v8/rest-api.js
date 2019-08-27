@@ -14,7 +14,12 @@ jQuery(function($) {
 	WPGMZA.RestAPI = function()
 	{
 		WPGMZA.RestAPI.URL = WPGMZA.resturl;
+		
+		this.useAJAXFallback = false;
 	}
+	
+	WPGMZA.RestAPI.CONTEXT_REST		= "REST";
+	WPGMZA.RestAPI.CONTEXT_AJAX		= "AJAX";
 	
 	/**
 	 * Creates an instance of a RestAPI, <strong>please <em>always</em> use this function rather than calling the constructor directly</strong>.
@@ -76,8 +81,79 @@ jQuery(function($) {
 		}).join("");
 		
 		var base64		= btoa(raw);
-		
 		return base64.replace(/\//g, "-") + suffix;
+	}
+	
+	function sendAJAXFallbackRequest(route, params)
+	{
+		var params = $.extend({}, params);
+		
+		if(!params.data)
+			params.data = {};
+		
+		if("route" in params.data)
+			throw new Error("Cannot send route through this method");
+		
+		if("action" in params.data)
+			throw new Error("Cannot send action through this method");
+		
+		params.data.route = route;
+		params.data.action = "wpgmza_rest_api_request";
+		
+		WPGMZA.restAPI.addNonce(route, params, WPGMZA.RestAPI.CONTEXT_AJAX);
+		
+		return $.ajax(WPGMZA.ajaxurl, params);
+	}
+	
+	WPGMZA.RestAPI.prototype.getNonce = function(route)
+	{
+		var matches = [];
+		
+		for(var pattern in WPGMZA.restnoncetable)
+		{
+			var regex = new RegExp(pattern);
+			
+			if(route.match(regex))
+				matches.push({
+					pattern: pattern,
+					nonce: WPGMZA.restnoncetable[pattern],
+					length: pattern.length
+				});
+		}
+		
+		if(!matches.length)
+			throw new Error("No nonce found for route");
+		
+		matches.sort(function(a, b) {
+			return b.length - a.length;
+		});
+		
+		return matches[0].nonce;
+	}
+	
+	WPGMZA.RestAPI.prototype.addNonce = function(route, params, context)
+	{
+		var self = this;
+		
+		var setRESTNonce = function(xhr) {
+			if(context == WPGMZA.RestAPI.CONTEXT_REST)
+				xhr.setRequestHeader('X-WP-Nonce', WPGMZA.restnonce);
+			
+			if(params && params.method && !params.method.match(/^GET$/i))
+				xhr.setRequestHeader('X-WPGMZA-Action-Nonce', self.getNonce(route));
+		};
+		
+		if(!params.beforeSend)
+			params.beforeSend = setRESTNonce;
+		else
+		{
+			var base = params.beforeSend;
+			
+			params.beforeSend = function(xhr) {
+				base(xhr);
+				setRESTNonce(xhr);
+			}
+		}
 	}
 	
 	/**
@@ -89,6 +165,10 @@ jQuery(function($) {
 	 */
 	WPGMZA.RestAPI.prototype.call = function(route, params)
 	{
+		if(this.useAJAXFallback)
+			return sendAJAXFallbackRequest(route, params);
+		
+		var self = this;
 		var attemptedCompressedPathVariable = false;
 		var fallbackRoute = route;
 		var fallbackParams = $.extend({}, params);
@@ -102,23 +182,40 @@ jQuery(function($) {
 		if(!params)
 			params = {};
 		
-		params.beforeSend = function(xhr) {
-			xhr.setRequestHeader('X-WP-Nonce', WPGMZA.restnonce);
-		};
+		this.addNonce(route, params, WPGMZA.RestAPI.CONTEXT_REST);
 		
 		if(!params.error)
 			params.error = function(xhr, status, message) {
 				if(status == "abort")
 					return;	// Don't report abort, let it happen silently
 				
-				if(xhr.status == 414 && attemptedCompressedPathVariable)
+				switch(xhr.status)
 				{
-					console.log("Should retry request with POST method");
+					case 401:
+					case 403:
+						// Report back to the server. This is usually due to a security plugin blocking REST requests for non-authenticated users
+						$.post(WPGMZA.ajaxurl, {
+							action: "wpgmza_report_rest_api_blocked"
+						}, function(response) {});
+						
+						console.warn("The REST API was blocked. This is usually due to security plugins blocking REST requests for non-authenticated users.");
+						
+						this.useAJAXFallback = true;
+						
+						return sendAJAXFallbackRequest(fallbackRoute, fallbackParams);
+						break;
 					
-					fallbackParams.method = "POST";
-					fallbackParams.useCompressedPathVariable = false;
+					case 414:
+						if(!attemptedCompressedPathVariable)
+							break;
 					
-					return WPGMZA.restAPI.call(fallbackRoute, fallbackParams);
+						// Fallback for HTTP 414 - Request too long with compressed requests
+						fallbackParams.method = "POST";
+						fallbackParams.useCompressedPathVariable = false;
+						
+						return WPGMZA.restAPI.call(fallbackRoute, fallbackParams);
+					
+						break;
 				}
 				
 				throw new Error(message);
@@ -128,11 +225,16 @@ jQuery(function($) {
 		{
 			var compressedParams = $.extend({}, params);
 			var data = params.data;
+			var compressedRoute = route.replace(/\/$/, "") + "/base64" + this.compressParams(data);
+			var fullCompressedRoute = WPGMZA.RestAPI.URL + compressedRoute;
 			
+			compressedParams.method = "GET";
 			delete compressedParams.data;
 			
-			var compressedRoute = route + "/base64" + this.compressParams(data);
-			var fullCompressedRoute = WPGMZA.RestAPI.URL + compressedRoute;
+			if(params.cache === false)
+				compressedParams.data = {
+					skip_cache: 1
+				};
 			
 			if(compressedRoute.length < this.maxURLLength)
 			{
@@ -143,6 +245,7 @@ jQuery(function($) {
 			}
 			else
 			{
+				// Fallback for when URL exceeds predefined length limit
 				if(!WPGMZA.RestAPI.compressedPathVariableURLLimitWarningDisplayed)
 					console.warn("Compressed path variable route would exceed URL length limit");
 				
@@ -160,24 +263,16 @@ jQuery(function($) {
 		
 		nativeCallFunction.apply(this, arguments);
 	}
-	
-	/*$(window).on("load", function(event) {
+
+	$(document.body).on("click", "#wpgmza-rest-api-blocked button.notice-dismiss", function(event) {
 		
-		var arr = [];
-		
-		for(var i = 0; i < 2048; i++)
-			arr.push(Math.random());
-		
-		WPGMZA.restAPI.call("/test", {
-			
-			useCompressedPathVariable: true,
+		WPGMZA.restAPI.call("/rest-api/", {
 			method: "POST",
 			data: {
-				test: arr
+				dismiss_blocked_notice: true
 			}
-			
 		});
 		
-	});*/
+	});
 	
 });

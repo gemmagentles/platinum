@@ -40,7 +40,7 @@ class ProMarkerFilter extends MarkerFilter
 				break;
 			
 			case "includeUnapproved":
-				if(!current_user_can('administrator'))
+				if(!$wpgmza->isUserAllowedToEdit())
 					throw new \Exception('Permission denied');
 				break;
 		}

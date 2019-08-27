@@ -46,7 +46,7 @@ jQuery(function($) {
 		if(this == this.map.userLocationMarker)
 			return;
 		
-		if(this.map.settings.store_locator_hide_before_search == 1)
+		if(this.map.settings.store_locator_hide_before_search == 1 && WPGMZA.is_admin != 1)
 		{
 			this.isFiltered = true;
 			this.setVisible(false);
@@ -92,7 +92,7 @@ jQuery(function($) {
 		}
 		
 		// NB: Redundant, this is now done on the DB
-		if(this.icon && this.icon.length || (window.google && this.icon instanceof google.maps.MarkerImage))
+		if(this.icon && this.icon.length || (window.google && window.google.maps && this.icon instanceof google.maps.MarkerImage))
 			return stripProtocol(this.icon);
 		
 		/*var categoryIcon = this.getIconFromCategory();

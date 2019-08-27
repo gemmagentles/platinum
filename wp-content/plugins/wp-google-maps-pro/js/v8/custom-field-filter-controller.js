@@ -157,6 +157,9 @@ jQuery(function($) {
 	
 	$(window).on("load", function(event) {
 		
+		if(WPGMZA.is_admin == 1)
+			return;
+		
 		$(".wpgmza_map").each(function(index, el) {
 			var map_id = parseInt( $(el).attr("id").match(/\d+/)[0] );
 			

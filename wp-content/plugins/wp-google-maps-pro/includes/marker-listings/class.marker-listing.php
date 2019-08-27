@@ -302,6 +302,20 @@ class MarkerListing extends AjaxTable
 		$container->appendChild($item);
 	}
 	
+	public function getRecords($input_params)
+	{
+		$records = AjaxTable::getRecords($input_params);
+		
+		// NB: Legacy support, V8 handles this with jsonSerialize
+		foreach($records->data as $key => $obj)
+			unset($records->data[$key]->latlng);
+		
+		foreach($records->meta as $key => $obj)
+			unset($records->meta[$key]->latlng);
+		
+		return $records;
+	}
+	
 	public static function createInstanceFromStyle($style, $map_id)
 	{
 		$class = apply_filters('wpgmza_get_marker_listing_class_from_style', $style);

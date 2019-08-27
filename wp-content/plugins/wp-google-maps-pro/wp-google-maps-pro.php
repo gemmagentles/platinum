@@ -3,12 +3,84 @@
 Plugin Name: WP Google Maps - Pro Add-on
 Plugin URI: http://www.wpgmaps.com
 Description: This is the Pro add-on for WP Google Maps. The Pro add-on enables you to add descriptions, pictures, links and custom icons to your markers as well as allows you to download your markers to a CSV file for quick editing and re-upload them when complete.
-Version:  7.11.36
+Version:  7.11.51
 Author: WP Google Maps
 Author URI: http://www.wpgmaps.com
 */
 
 /*
+ * 7.11.51 :- 2019-08-12 :- Medium priority
+ * Fixed $ is undefined in legacy-map-edit-page.js since 7.11.49 on some installations
+ *
+ * 7.11.50 :- 2019-08-09 :- Medium priority
+ * Fixed users below administrator level can't use marker library
+ * Fixed JSON importer not correctly remapping categories
+ * Fixed "hide all markers before a search is done" hiding markers on back end
+ *
+ * 7.11.49 :- 2019-07-31 :- Medium priority
+ * Added nonce check to duplicate map function
+ * Fixed map type setting not "live" in map editor
+ * Fixed map type setting not initially reflected in map editor
+ *
+ * 7.11.48 :- 2019-07-29 :- Medium priority
+ * Fixed store locator not working in OpenLayers since 7.11.47 due to missing nonce
+ *
+ * 7.11.47 :- 2019-07-29 :- Medium priority
+ * REST API security enhanced with additional per-route nonces
+ * getScrollAnimationOffset now accounts for WP admin bar height
+ * removeMarker now closes marker InfoWindow before removing it
+ * Fixed advanced table search having no effect when used in conjunction with a store locator search
+ * Fixed markers not removed from map panel following bulk delete
+ * Fixed notice when entry already exists in category import
+ *
+ * 7.11.46 :- 2019-07-23 :- Medium priority
+ * Fixed marker library not saving icon on category page
+ * Fixed duplicate primary key notice when saving categories
+ *
+ * 7.11.45 :- 2019-07-22 :- Low priority
+ * Added infowindowopen event for Modern style infowindows
+ * Added new filter wpgmza_legacy_localize_polygon_data
+ * Altered wpgmza_get_category_data to respect category priority
+ * Fixed category priority not respected by marker category icon in map panel
+ *
+ * 7.11.44 :- 2019-07-11 :- High priority
+ * Closed potential security vulnerabilities
+ * Added console warning when older version of dataTables is loaded
+ * Fixed category filtering not working with legacy style store locator
+ * Fixed click event for map firing when a marker is clicked
+ * Re-added AJAX fallback for setups with REST API blocking
+ *
+ * 7.11.43 :- 2019-07-05 :- Medium priority
+ * Fixed category filtering not working with modern style store locator
+ * Fixed marker links being stripped of percent encoded characters
+ *
+ * 7.11.42 :- 2019-07-02 :- Low priority
+ * Added admin-ajax fallback for when REST API is blocked
+ *
+ * 7.11.41 :- 2019-06-25 :- Low priority
+ * Mappity (Marker Library) loading deferred until dialog opens
+ *
+ * 7.11.40 :- 2019-06-24 :- Medium priority
+ * Added new event userlocationmarkerplaced.wpgmza
+ * Fixed advanced table marker listing stuck on "Processing..." when no results are found
+ * Fixed "Get directions" in InfoWindow not working
+ * Fixed checkbox category filtering not triggering filter update
+ * Fixed REST API warning persisting after dismissal
+ *
+ * 7.11.39 :- 2019-06-21 :- Medium priority
+ * Fixed marker listing category filter not triggering filtering update since last update
+ * Fixed marker listing directions link not working
+ *
+ * 7.11.38 :- 2019-06-19 :- Medium priority
+ * Fixed store locator category checkboxes triggering marker filter to update before any buttons were pressed
+ * Fixed undefined variable notice in class.pro-admin-marker-table.php
+ * Fixed clicking advanced table marker listing list item not updating map panel
+ *
+ * 7.11.37 :- 2019-06-18 :- Low priority
+ * Added checkbox to disable Autoptimize workaround for setups where the workaround prevents CSS aggregation
+ * Performance for filtering and marker listings significantly improved when using REST caching / CDN and experimental compressed request setting
+ * Fixed issues with Safari and modern style store locator radius, check now added to ProStoreLocator module
+ * 
  * 7.11.36 :- 2019-06-12 :- Low priority
  * Improved handling of invalid JSON data in custom fields attribute column
  * Fixed ambiguous column `active` in page.categories.php

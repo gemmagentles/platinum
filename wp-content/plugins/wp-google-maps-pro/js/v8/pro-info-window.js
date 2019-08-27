@@ -526,6 +526,7 @@ jQuery(function($) {
 		}
 		
 		this.trigger("domready");
+		this.trigger("infowindowopen");
 
 		return true;
 	}
@@ -541,6 +542,34 @@ jQuery(function($) {
 		$(document.body).on("click", ".wpgmza-close-info-window", function(event) {
 			$(event.target).closest(".wpgmza-info-window").remove();
 		});
+	});
+	
+	$(document.body).on("click", ".wpgmza-infowindow .wpgmza_gd", function(event) {
+		
+		var map = $(event.target).closest("[data-map-id]")[0].wpgmzaMap;
+		
+		var latLng = new WPGMZA.LatLng($(event.target).attr("data-latlng"));
+		var address = $(event.target).attr("data-address");
+		
+		if( !WPGMZA.settings.forceNativeDirections && /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) )
+		{
+        
+			if( (navigator.platform.indexOf("iPhone") != -1)
+				|| (navigator.platform.indexOf("iPod") != -1)
+				|| (navigator.platform.indexOf("iPad") != -1))
+				window.open("http://maps.apple.com/maps?daddr="+latLong+"&ll=");
+			else
+				window.open("http://maps.google.com/maps?daddr="+latLong+"&ll=");
+			
+		}
+		else
+		{
+			$("#wpgmaps_directions_edit_" + map.id).show();
+			$("#wpgmaps_directions_editbox_" + map.id).show();
+			$("#wpgmza_input_to_" + map.id).val(address && address.length > 0 ? address : latLng.toString());
+			$("#wpgmza_input_from_" + map.id).focus().select();
+		}
+		
 	});
 	
 });
