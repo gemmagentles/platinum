@@ -220,6 +220,10 @@ Please upgrade your version of WP Google Maps to version 6.0.27 as it includes m
 
 == Changelog ==
 
+= 7.11.48 :- 2019-08-28 :- Low priority =
+* Fixed polygons and polylines not displaying back end before global settings have been saved
+* Increased link column to accept 2083 characters
+
 = 7.11.47 :- 2019-08-09 :- Medium priority =
 * Fixed map engine dialog submission not working
 * Fixed WPGMZA.EventDispatcher not handing some native events over to DOM correctly
@@ -1262,6 +1266,13 @@ Please upgrade your version of WP Google Maps to version 6.0.27 as it includes m
 
 
 For more, please view the WP Google Maps site
+
+
+
+
+
+
+
 
 
 
