@@ -156,5 +156,18 @@
 
     &__image {
         width: 100%;
+
+        &--landscape {
+            @include breakpoint(smalldesktop) {
+                width: auto;
+                height: 360px;
+            }
+            @include breakpoint(desktop) {
+                height: 400px;
+            }
+            @include breakpoint(largedesktop) {
+                height: 500px;
+            }
+        }
     }
 }
