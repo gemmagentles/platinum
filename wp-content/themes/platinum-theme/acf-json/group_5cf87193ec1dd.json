@@ -154,6 +154,30 @@
                     "ui": 0,
                     "ui_on_text": "",
                     "ui_off_text": ""
+                },
+                {
+                    "key": "field_5d7165ad9978d",
+                    "label": "Image orientation",
+                    "name": "image_orientation",
+                    "type": "radio",
+                    "instructions": "Is the image you are adding portrait or landscape view?",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "portrait": "Portrait",
+                        "landscape": "Landscape"
+                    },
+                    "allow_null": 0,
+                    "other_choice": 0,
+                    "default_value": "",
+                    "layout": "vertical",
+                    "return_format": "value",
+                    "save_other_choice": 0
                 }
             ]
         }
@@ -175,5 +199,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1560301951
+    "modified": 1567714189
 }

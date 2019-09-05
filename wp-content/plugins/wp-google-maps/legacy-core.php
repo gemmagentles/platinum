@@ -699,8 +699,6 @@ function wpgmaps_admin_edit_marker_javascript() {
         }
         MYMAP.init = function(selector, latLng, zoom) {
 			
-			console.log(latLng);
-			
             var myOptions = {
                 zoom:zoom,
                 center: latLng,
@@ -6041,7 +6039,7 @@ function wpgmaps_handle_db() {
           address varchar(700) NOT NULL,
           description mediumtext NOT NULL,
           pic varchar(700) NOT NULL,
-          link varchar(700) NOT NULL,
+          link varchar(2083) NOT NULL,
           icon varchar(700) NOT NULL,
           lat varchar(100) NOT NULL,
           lng varchar(100) NOT NULL,

@@ -8834,9 +8834,12 @@ function wpgmza_upload_base64_image()
 {
 	global $wpgmza;
 	
-	if(!function_exists('wp_handle_sideload'))
-		wpgmza_require_once( ABSPATH . 'wp-admin/includes/file.php' );
+	// Load media functions
+	wpgmza_require_once( ABSPATH . 'wp-admin/includes/file.php' );
+	wpgmza_require_once( ABSPATH . 'wp-admin/includes/media.php' );
+	wpgmza_require_once( ABSPATH . 'wp-admin/includes/image.php' );
 	
+	// Security checks
 	check_ajax_referer( 'wpgmza', 'security' );
 	
 	if(!$wpgmza->isUserAllowedToEdit())
@@ -8845,6 +8848,7 @@ function wpgmza_upload_base64_image()
 		exit;
 	}
 	
+	// Handle upload
 	$upload_dir = wp_upload_dir();
 	$upload_path = str_replace( '/', DIRECTORY_SEPARATOR, $upload_dir['path'] ) . DIRECTORY_SEPARATOR;
 	$base64_img = $_POST['data'];
@@ -8865,17 +8869,35 @@ function wpgmza_upload_base64_image()
 			break;
 	}
 	
-	file_put_contents($upload_path . $filename, $image_data);
+	$tmp_name = $upload_path . $filename;
+	
+	file_put_contents($tmp_name, $image_data);
 	
 	$file = array(
-		'error'		=> '',
-		'tmp_name'	=> $upload_path . $filename,
+		'error'		=> 0,
+		'tmp_name'	=> $tmp_name,
 		'name'		=> $filename,
 		'type'		=> $_POST['mimeType'],
-		'size'		=> filesize($upload_path . $filename)
+		'size'		=> filesize($tmp_name)
 	);
 	
 	$result = wp_handle_sideload($file, array('test_form' => false));
+	
+	$attachment	= array(
+		'post_title' 		=> basename($result['file']),
+		'post_content'		=> '',
+		'post_status'		=> 'inherit',
+		'post_mime_type'	=> $result['type']
+	);
+	
+	$attachment_id = wp_insert_attachment(
+		$attachment,
+		$result['file']
+	);
+	
+	$meta_data = wp_generate_attachment_metadata($attachment_id, $result['file']);
+	
+	wp_update_attachment_metadata($attachment_id, $meta_data);
 	
 	wp_send_json($result);
 	exit;

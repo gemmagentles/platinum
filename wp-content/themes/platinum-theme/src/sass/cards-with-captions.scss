@@ -40,26 +40,27 @@
     &__image-wrapper {
         position: relative;
 
-        &:hover,
-        &:focus {
-            @include breakpoint(smalldesktop) {
+        // temporary comment out this code while client waits for content to add to this, it should not show. 
+        // &:hover,
+        // &:focus {
+        //     @include breakpoint(smalldesktop) {
 
-                &::before {
-                    content: " ";
-                    background-color: black;
-                    width: 100%;
-                    height: 100%;
-                    opacity: 0.7;
-                    position: absolute;
-                    z-index: 1;
-                }
+        //         &::before {
+        //             content: " ";
+        //             background-color: black;
+        //             width: 100%;
+        //             height: 100%;
+        //             opacity: 0.7;
+        //             position: absolute;
+        //             z-index: 1;
+        //         }
 
-                .cards-with-captions__hover-paragraph {
-                    visibility: visible;
-                    opacity: 1;
-                }
-            }
-        }
+        //         .cards-with-captions__hover-paragraph {
+        //             visibility: visible;
+        //             opacity: 1;
+        //         }
+        //     }
+        // }
     }
 
     &__image {
