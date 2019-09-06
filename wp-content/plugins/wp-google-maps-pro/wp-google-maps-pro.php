@@ -3,12 +3,22 @@
 Plugin Name: WP Google Maps - Pro Add-on
 Plugin URI: http://www.wpgmaps.com
 Description: This is the Pro add-on for WP Google Maps. The Pro add-on enables you to add descriptions, pictures, links and custom icons to your markers as well as allows you to download your markers to a CSV file for quick editing and re-upload them when complete.
-Version:  7.11.51
+Version:  7.11.52
 Author: WP Google Maps
 Author URI: http://www.wpgmaps.com
 */
 
 /*
+ * 7.11.52 :- 2019-08-28 :- Medium priority
+ * Added new setting importer_google_maps_api_key
+ * Added additional protocol stripping to WPGMZA.ProMarker.prototype.updateIcon (fixes some icons not loading when migrating to https://)
+ * Adding icons through Marker Library (Mappity.org) now creates media attachments
+ * Changed deprecated references to wpgmza_localized_strings to WPGMZA.localized_strings
+ * WPGMZA.ProInfoWindow now dispatches infowindowopen.wpgmza with modern styles
+ * Fixed all URL imports (except Google Sheets) assumed to be JSON format, now uses extension (will use Content-type in the future)
+ * Fixed mashupIDs not used by ProMarkerFilter
+ * Fixed 0 key custom fields being added to custom field data
+ *
  * 7.11.51 :- 2019-08-12 :- Medium priority
  * Fixed $ is undefined in legacy-map-edit-page.js since 7.11.49 on some installations
  *

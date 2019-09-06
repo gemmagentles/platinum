@@ -13,8 +13,9 @@
             </div>
             <div class="half-and-half-panel__image-wrapper">
                 <?php $image = get_sub_field( 'image' ); ?>
+                <?php $image_orientation = get_sub_field( 'image_orientation' ); ?>
                 <?php if ( $image ) { ?>
-                    <img data-aos="fade-right" data-aos-easing="ease-in" data-aos-delay="650" data-aos-duration="550" class="half-and-half-panel__image" src="<?php echo $image['url']; ?>" alt="<?php echo $image['alt']; ?>" />
+                    <img data-aos="fade-right" data-aos-easing="ease-in" data-aos-delay="650" data-aos-duration="550" class="half-and-half-panel__image<?php if ( $image_orientation == 'landscape') { ?> half-and-half-panel__image--landscape<?php } ?>" src="<?php echo $image['url']; ?>" alt="<?php echo $image['alt']; ?>" />
                 <?php } ?>
             </div>
         </div>

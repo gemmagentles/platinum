@@ -5384,13 +5384,8 @@ jQuery(function($) {
 	 */
 	WPGMZA.Version.compare = function(v1, v2)
 	{
-		var v1parts = v1.split('.');
-		var v2parts = v2.split('.');
-
-		// First, validate both numbers are true version numbers
-		if (!validateParts(v1parts) || !validateParts(v2parts)) {
-			return NaN;
-		}
+		var v1parts = v1.match(/\d+/g);
+		var v2parts = v2.match(/\d+/g);
 
 		for (var i = 0; i < v1parts.length; ++i) {
 			if (v2parts.length === i) {
@@ -8305,7 +8300,7 @@ jQuery(function($) {
 			case google.maps.DirectionsStatus.REQUEST_DENIED:
 			 
 				var key = status.toLowerCase();
-				var message = wpgmza_localized_strings[key];
+				var message = WPGMZA.localized_strings[key];
 				
 				$(this.element).find(".wpgmza-directions-results").html(
 					'<i class="fa fa-times" aria-hidden="true"></i>' + message
@@ -8395,19 +8390,19 @@ jQuery(function($) {
 				<div class='wpgmza-modern-marker-listing-button wpgmza-link-button'>\
 					<i class='fa fa-link' aria-hidden='true'></i>\
 					<div>\
-						" + wpgmza_localized_strings.link + "\
+						" + WPGMZA.localized_strings.link + "\
 					</div>\
 				</div>\
 				<div class='wpgmza-modern-marker-listing-button wpgmza-directions-button'>\
 					<i class='fa fa-road' aria-hidden='true'></i>\
 					<div>\
-						" + wpgmza_localized_strings.directions + "\
+						" + WPGMZA.localized_strings.directions + "\
 					</div>\
 				</div>\
 				<div class='wpgmza-modern-marker-listing-button wpgmza-zoom-button'>\
 					<i class='fa fa-search-plus' aria-hidden='true'></i>\
 					<div>\
-						" + wpgmza_localized_strings.zoom + "\
+						" + WPGMZA.localized_strings.zoom + "\
 					</div>\
 				</div>\
 			</div>\
@@ -10511,19 +10506,6 @@ jQuery(function($) {
 		nativeBounds.east = bottomRight[0];
 		
 		return nativeBounds;
-		
-		/*return 
-		
-		return {
-			topLeft: {
-				lat: topLeft[1],
-				lng: topLeft[0]
-			},
-			bottomRight: {
-				lat: bottomRight[1],
-				lng: bottomRight[0]
-			}
-		};*/
 	}
 	
 	/**
@@ -12953,6 +12935,9 @@ jQuery(function($) {
 	{
 		var self = this;
 		var icon = this.getIcon();
+		
+		if(icon && icon.url)
+			icon.url = icon.url.replace(/^http(s?):/, "");
 		
 		if(this.settings.retina)
 		{

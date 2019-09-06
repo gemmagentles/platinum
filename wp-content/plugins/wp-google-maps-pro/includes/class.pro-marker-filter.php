@@ -39,6 +39,10 @@ class ProMarkerFilter extends MarkerFilter
 				$this->loadMap();
 				break;
 			
+			case "mashup_ids":
+				$this->_mashupIDs = $value;
+				break;
+			
 			case "includeUnapproved":
 				if(!$wpgmza->isUserAllowedToEdit())
 					throw new \Exception('Permission denied');
