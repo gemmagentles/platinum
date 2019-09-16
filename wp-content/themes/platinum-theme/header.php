@@ -2,7 +2,7 @@
 <html <?php language_attributes(); ?> class="no-js">
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
-    <title><?php wp_title(''); ?></title>
+    <title><?php bloginfo('name'); ?> | <?php is_front_page() ? bloginfo('description') : wp_title(''); ?></title>
     <link href="<?php echo get_template_directory_uri(); ?>/img/icons/favicon.ico" rel="shortcut icon">
     <link href="<?php echo get_template_directory_uri(); ?>/img/icons/touch.png" rel="apple-touch-icon-precomposed">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.1/min/tiny-slider.js"></script>
@@ -21,7 +21,9 @@
         <div class="header__container">
             <div class="header__logo">
                 <a href="<?php echo home_url(); ?>">
-                    <svg class="header__logo-img"><use href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-logo" xlink:href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-logo"/></svg>
+                    <svg aria-labelledby="title" class="header__logo-img">
+                    <title id="title" lang="en">Platinum Home</title>
+                    <use href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-logo" xlink:href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-logo"/></svg>
                 </a>
             </div>
             <!-- Mobile Menu -->
@@ -51,7 +53,7 @@
                                     <div class="header__dropdown--container">
                                         <a class="header__dropdown--link" title="<?php the_sub_field( 'sub_menu_item_name' ); ?>" href="<?php the_sub_field( 'sub_menu_item_link' ); ?>">
                                             <?php if ( get_sub_field( 'button_image' ) ) { ?>
-                                                <img class="header__dropdown--image" src="<?php the_sub_field( 'button_image' ); ?>" />
+                                                <img class="header__dropdown--image" alt="" src="<?php the_sub_field( 'button_image' ); ?>" />
                                             <?php } ?>
                                             <div class="header__dropdown--text"><?php the_sub_field( 'sub_menu_item_name' ); ?></div>
                                         </a>
@@ -69,13 +71,19 @@
 
             <div class="header__social">
                 <a class="header__social--link" title="Facebook" href="<?php the_field('facebook_url', 'option'); ?>" target="_blank">
-                    <svg class="header__social--icon"><use href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-facebook-icon" xlink:href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-facebook-icon"/></svg>
+                    <svg aria-labelledby="title" class="header__social--icon">
+                    <title id="title" lang="en">Facebook</title>
+                    <use href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-facebook-icon" xlink:href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-facebook-icon"/></svg>
                 </a>
                 <a class="header__social--link" title="Twitter" href="<?php the_field('twitter_url', 'option'); ?>" target="_blank">
-                    <svg class="header__social--icon"><use href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-twitter-icon" xlink:href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-twitter-icon"/></svg>
+                    <svg aria-labelledby="title" class="header__social--icon">
+                    <title id="title" lang="en">Twitter</title>
+                    <use href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-twitter-icon" xlink:href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-twitter-icon"/></svg>
                 </a>
                 <a class="header__social--link" title="Instagram" href="<?php the_field('instagram_url', 'option'); ?>" target="_blank">
-                    <svg class="header__social--icon"><use href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-instagram-icon" xlink:href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-instagram-icon"/></svg>
+                    <svg aria-labelledby="title" class="header__social--icon">
+                    <title id="title" lang="en">Instagram</title>
+                    <use href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-instagram-icon" xlink:href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-instagram-icon"/></svg>
                 </a>
             </div>
         </div>

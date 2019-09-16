@@ -6254,7 +6254,7 @@ function wpgmza_settings_page_post_pro()
 		$wpgmza->settings['wpgmza_iw_type'] = esc_attr($_POST['wpgmza_iw_type']);
 	else 
 		$wpgmza->settings['wpgmza_iw_type'] = '-1';
-
+	
 	$arr = apply_filters("wpgooglemaps_filter_save_settings", $wpgmza->settings);
 	$wpgmza->settings->set($arr);
 

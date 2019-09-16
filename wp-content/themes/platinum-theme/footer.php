@@ -4,7 +4,9 @@
 						<div class="footer__container--left">
 							<div class="footer__logo">
 								<a href="<?php echo home_url(); ?>">
-									<svg class="footer__logo-img"><use href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-logo" xlink:href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-logo"/></svg>
+									<svg aria-labelledby="title" class="footer__logo-img">
+									<title id="title" lang="en">Platinum Home</title>
+									<use href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-logo" xlink:href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-logo"/></svg>
 								</a>
 							</div>
 						</div>
@@ -19,13 +21,19 @@
 							</div>
 							<div class="footer__social">
 								<a class="footer__social--link" title="Facebook" href="<?php the_field('facebook_url', 'option'); ?>" target="_blank">
-									<svg class="footer__social--icon"><use href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-facebook-icon" xlink:href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-facebook-icon"/></svg>
+									<svg aria-labelledby="title" class="footer__social--icon">
+									<title id="title" lang="en">Facebook</title>
+									<use href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-facebook-icon" xlink:href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-facebook-icon"/></svg>
 								</a>
 								<a class="footer__social--link" title="Twitter" href="<?php the_field('twitter_url', 'option'); ?>" target="_blank">
-									<svg class="footer__social--icon"><use href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-twitter-icon" xlink:href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-twitter-icon"/></svg>
+									<svg aria-labelledby="title" class="footer__social--icon">
+									<title id="title" lang="en">Twitter</title>
+									<use href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-twitter-icon" xlink:href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-twitter-icon"/></svg>
 								</a>
 								<a class="footer__social--link" title="Instagram" href="<?php the_field('instagram_url', 'option'); ?>" target="_blank">
-									<svg class="footer__social--icon"><use href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-instagram-icon" xlink:href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-instagram-icon"/></svg>
+									<svg aria-labelledby="title" class="footer__social--icon">
+									<title id="title" lang="en">Instagram</title>
+									<use href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-instagram-icon" xlink:href="<?php echo get_template_directory_uri(); ?>/img/icons/icons.svg#icon-instagram-icon"/></svg>
 								</a>
 							</div>
 						</div>
