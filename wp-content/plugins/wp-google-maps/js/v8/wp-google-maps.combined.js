@@ -7,6 +7,18 @@
 jQuery(function($) {
 	
 	var core = {
+		MARKER_PULL_DATABASE:	"0",
+		MARKER_PULL_XML:		"1",
+		
+		PAGE_MAP_LIST: 			"map-list",
+		PAGE_MAP_EDIT:			"map-edit",
+		PAGE_SETTINGS:			"map-settings",
+		PAGE_SUPPORT:			"map-support",
+		
+		PAGE_CATEGORIES:		"categories",
+		PAGE_ADVANCED:			"advanced",
+		PAGE_CUSTOM_FIELDS:		"custom-fields",
+		
 		/**
 		 * Indexed array of map instances
 		 * @constant {array} maps
@@ -43,6 +55,44 @@ jQuery(function($) {
 		localized_strings: null,
 		
 		loadingHTML: '<div class="wpgmza-preloader"><div class="wpgmza-loader">...</div></div>',
+		
+		getCurrentPage: function() {
+			
+			switch(WPGMZA.getQueryParamValue("page"))
+			{
+				case "wp-google-maps-menu":
+					if(window.location.href.match(/action=edit/) && window.location.href.match(/map_id=\d+/))
+						return WPGMZA.PAGE_MAP_EDIT;
+				
+					return WPGMZA.PAGE_MAP_LIST;
+					break;
+					
+				case 'wp-google-maps-menu-settings':
+					return WPGMZA.PAGE_SETTINGS;
+					break;
+					
+				case 'wp-google-maps-menu-support':
+					return WPGMZA.PAGE_SUPPORT;
+					break;
+					
+				case 'wp-google-maps-menu-categories':
+					return WPGMZA.PAGE_CATEGORIES;
+					break;
+					
+				case 'wp-google-maps-menu-advanced':
+					return WPGMZA.PAGE_ADVANCED;
+					break;
+					
+				case 'wp-google-maps-menu-custom-fields':
+					return WPGMZA.PAGE_CUSTOM_FIELDS;
+					break;
+					
+				default:
+					return null;
+					break;
+			}
+			
+		},
 		
 		/**
 		 * Override this method to add a scroll offset when using animated scroll, useful for sites with fixed headers.
@@ -477,7 +527,7 @@ jQuery(function($) {
 			
 			// Workaround for map ID member not set correctly
 			
-			if(WPGMZA.isProVersion())
+			if(WPGMZA.isProVersion() && !(MYMAP.map instanceof WPGMZA.Map))
 				return MYMAP[id].map;
 			
 			return MYMAP.map;
@@ -1784,7 +1834,7 @@ jQuery(function($) {
 			
 			setTimeout(function() {
 				$(el).append(container);
-			}, 100);
+			}, 1000);
 		});
 		
 		$(".gm-err-container").parent().css({"z-index": 1});
@@ -8540,7 +8590,7 @@ jQuery(function($) {
 		img.src = WPGMZA.defaultMarkerIcon;
 		
 		this.element = $("<div class='ol-marker'></div>")[0];
-		this.element.append(img);
+		this.element.appendChild(img);
 		
 		this.element.wpgmzaMarker = this;
 		
@@ -9156,13 +9206,23 @@ jQuery(function($) {
 	
 	WPGMZA.DataTable = function(element)
 	{
+		if(!$.fn.dataTable)
+		{
+			console.warn("The dataTables library is not loaded. Cannot create a dataTable. Did you enable 'Do not enqueue dataTables'?");
+			
+			if(WPGMZA.settings.wpgmza_do_not_enqueue_datatables && WPGMZA.getCurrentPage() == WPGMZA.PAGE_MAP_EDIT)
+				alert("You have selected 'Do not enqueue DataTables' in WP Google Maps' settings. No 3rd party software is loading the DataTables library. Because of this, the marker table cannot load. Please uncheck this option to use the marker table.");
+			
+			return;
+		}
+		
 		if($.fn.dataTable.ext)
 			$.fn.dataTable.ext.errMode = "throw";
 		else
 		{
 			var version = $.fn.dataTable.version ? $.fn.dataTable.version : "unknown";
 			
-			console.log("You appear to be running an outdated or modified version of the dataTables library. This may cause issues with table functionality. This is usually caused by 3rd party software loading an older version of DataTables. The loaded version is " + version + ", we recommend version 1.10.12 or above.");
+			console.warn("You appear to be running an outdated or modified version of the dataTables library. This may cause issues with table functionality. This is usually caused by 3rd party software loading an older version of DataTables. The loaded version is " + version + ", we recommend version 1.10.12 or above.");
 		}
 		
 		this.element = element;
