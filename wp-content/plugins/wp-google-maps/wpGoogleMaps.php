@@ -3,7 +3,7 @@
 Plugin Name: WP Google Maps
 Plugin URI: https://www.wpgmaps.com
 Description: The easiest to use Google Maps plugin! Create custom Google Maps with high quality markers containing locations, descriptions, images and links. Add your customized map to your WordPress posts and/or pages quickly and easily with the supplied shortcode. No fuss.
-Version: 7.11.48
+Version: 7.11.50
 Author: WP Google Maps
 Author URI: https://www.wpgmaps.com
 Text Domain: wp-google-maps
@@ -11,6 +11,15 @@ Domain Path: /languages
 */
 
 /*
+ * 7.11.50 :- 2019-09-13 :- Medium priority
+ * Fixed markers not visible in Internet Explorer when using OpenLayers (append is not a method)
+ *
+ * 7.11.49 :- 2019-09-10 :- Medium priority
+ * Added warning when "Do not enqueue datatables" is selected, but dataTables library is not loaded
+ * Added comment to wpgmza_data.js to fix issues with empty files and Safari
+ * Altered "zero-results" message to "No results found for this address"
+ * Fixed skipNonceCheck flag being ignored when Live Tracking App is used
+ *
  * 7.11.48 :- 2019-08-28 :- Low priority
  * Fixed polygons and polylines not displaying back end before global settings have been saved
  * Increased link column to accept 2083 characters

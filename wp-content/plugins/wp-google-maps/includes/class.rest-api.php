@@ -111,7 +111,7 @@ class RestAPI extends Factory
 		
 		$callback = $args['callback'];
 		
-		$args['callback'] = function($request) use ($route, $callback, $methodIsOnlyGET)
+		$args['callback'] = function($request) use ($route, $args, $callback, $methodIsOnlyGET)
 		{
 			global $wpgmza;
 			
